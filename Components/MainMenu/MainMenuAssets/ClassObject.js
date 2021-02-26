@@ -4,18 +4,20 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import logo from './cal.jpg';
+import grades from './grades.jpg';
 
 const ClassObject = (props) => {
   return (
     <View style={styles.classIcon}>
       <Image
         style={styles.img}
-        source={{
-          uri:
-            'https://www.cnn.com/2010/POLITICS/06/08/rage.obama/t1largrage.gi.jpg',
-        }}
+        source={{uri: props.imgSrc}}
+
       />
-      <Text style={styles.className}>Math or something lol</Text>
+      <Text style={styles.className}>{props.title}</Text>
+      <Image style={styles.cal} source={logo} />
+      <Image style={styles.grade} source={grades}/>
     </View>
   );
 };
@@ -24,31 +26,42 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: wp('80%'),
     color: '#fff',
-    fontFamily: 'monospace',
+    fontSize: 20,
+    fontFamily: 'sans',
     zIndex: 1,
-    padding: 20,
+    padding: 10,
+    backgroundColor:'grey',
     borderRadius: 10,
-    textAlign: 'left',
+    textAlign: 'right',
   },
   classIcon: {
-    flex: 1,
+    marginTop:30,
     borderRadius: 10,
     alignItems: 'center',
     padding: 20,
   },
   img: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    position: 'relative',
     width: wp('80%'),
     height: 200,
     borderRadius: 10,
-    elevation: 8,
+    zIndex: 1,
+  },
+  cal: {
+    right: 50,
+    top: 50,
+    borderRadius: 10,
+    width: 50,
+    height: 50,
+    position: 'absolute',
+    zIndex: 1,
+  },
+  grade: {
+    right: 50,
+    top: 145,
+    borderRadius: 10,
+    width: 50,
+    height: 50,
+    position: 'absolute',
     zIndex: 1,
   },
 });
