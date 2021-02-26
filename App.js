@@ -1,61 +1,21 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import * as React from 'react';
-
 import 'react-native-gesture-handler';
 import MainMenuScreen from './Components/MainMenu/MainMenuScreen';
 import StudySessionsScreen from './Components/StudySessions/StudySessionsScreen';
 import { createStackNavigator } from "@react-navigation/stack";
-import {SafeAreaView, Text, View, Button} from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
 
-/*
-const NavigationController: () => React$Node = () => {
+const NavigationController = () => {
   return (
     <NavigationContainer>
-      <StackNavigator initialRouteName={StudySessionsScreen}>
-        <
-      </StackNavigator>
+      <Nav.Navigator initialRouteName="StudySessions">
+        <Nav.Screen name="MainMenu" component={MainMenuScreen}/>
+        <Nav.Screen name="StudySessions" component={StudySessionsScreen}/>
+      </Nav.Navigator>
     </NavigationContainer>
-  );
-};*/
-
-const Stack = createStackNavigator();
-
-/*
-const NavigationController: () => React$Node = () => {
-  return (
-    <NavigationController>
-      <Stack.Navigator>
-        <Stack.Screen name="MainMenu" component={MainMenuScreen} />
-        <Stack.Screen name="StudySessions" component={StudySessionsScreen} />
-      </Stack.Navigator>
-    </NavigationController>
-  );
-};*/
-
-const NavigationController: () => React$Node = () => {
-  return (
-    <Nav.Navigator>
-      <Nav.Screen name="MainMenu" component={MainMenuScreen}/>
-      <Nav.Screen name="StudySessions" component={StudySessionsScreen}/>
-    </Nav.Navigator>
   );
 };
 
-const Nav = createStackNavigator(
-  /*{
-    MainMenu: {screen: MainMenuScreen},
-    StudySessions: {screen: StudySessionsScreen},
-  },
-  {
-    initialRouteName: 'MainMenu',
-  }*/
-);
+const Nav = createStackNavigator();
 
 export default NavigationController;

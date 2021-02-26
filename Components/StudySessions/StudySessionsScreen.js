@@ -6,7 +6,7 @@ const StudySessionsScreen = () => {
     <SafeAreaView>
       <View>
         <Text>Study Sessions</Text>
-        <Button>Please Work</Button>
+        <Button title="FUCK">Please Work</Button>
       </View>
     </SafeAreaView>
   );
