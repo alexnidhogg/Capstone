@@ -1,4 +1,4 @@
-import {SafeAreaView, Text, View} from 'react-native';
+
 import * as React from 'react';
 import Header from "./MainMenuAssets/Header";
 import ClassObject from "./MainMenuAssets/ClassObject";
@@ -6,6 +6,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {SafeAreaView, Text, View, Button} from 'react-native';
 
 const MainMenuScreen = () => {
   return (

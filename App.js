@@ -7,84 +7,55 @@
  */
 
 import * as React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 import 'react-native-gesture-handler';
-import * as Navigation from '@react-navigation/native';
-import MainMenuScreen from "./Components/MainMenu/MainMenuScreen";
-import StudySessionsScreen from "./Components/StudySessions/StudySessionsScreen";
+import MainMenuScreen from './Components/MainMenu/MainMenuScreen';
+import StudySessionsScreen from './Components/StudySessions/StudySessionsScreen';
+import { createStackNavigator } from "@react-navigation/stack";
+import {SafeAreaView, Text, View, Button} from 'react-native';
+
+/*
+const NavigationController: () => React$Node = () => {
+  return (
+    <NavigationContainer>
+      <StackNavigator initialRouteName={StudySessionsScreen}>
+        <
+      </StackNavigator>
+    </NavigationContainer>
+  );
+};*/
+
+const Stack = createStackNavigator();
+
+/*
+const NavigationController: () => React$Node = () => {
+  return (
+    <NavigationController>
+      <Stack.Navigator>
+        <Stack.Screen name="MainMenu" component={MainMenuScreen} />
+        <Stack.Screen name="StudySessions" component={StudySessionsScreen} />
+      </Stack.Navigator>
+    </NavigationController>
+  );
+};*/
 
 const NavigationController: () => React$Node = () => {
   return (
-    <Navigation.NavigationContainer>
-      <Navigation.Stack.Navigator initialRouteName="MainMenuScreen">
-        <Navigation.Stack.Screen
-          name="Main Menu"
-          component={MainMenuScreen}
-          options={{title: 'Main Menu'}}
-        />
-        <Navigation.Stack.Screen
-          name="Study Sessions"
-          component={StudySessionsScreen}
-        />
-      </Navigation.Stack.Navigator>
-    </Navigation.NavigationContainer>
+    <Nav.Navigator>
+      <Nav.Screen name="MainMenu" component={MainMenuScreen}/>
+      <Nav.Screen name="StudySessions" component={StudySessionsScreen}/>
+    </Nav.Navigator>
   );
 };
 
-
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+const Nav = createStackNavigator(
+  /*{
+    MainMenu: {screen: MainMenuScreen},
+    StudySessions: {screen: StudySessionsScreen},
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
+  {
+    initialRouteName: 'MainMenu',
+  }*/
+);
 
 export default NavigationController;

@@ -1,11 +1,12 @@
-import {SafeAreaView, Text, View} from 'react-native';
+import {SafeAreaView, Text, View, Button} from 'react-native';
 import * as React from 'react';
 
 const StudySessionsScreen = () => {
   return (
     <SafeAreaView>
       <View>
-        <Text>Study Session</Text>
+        <Text>Study Sessions</Text>
+        <Button>Please Work</Button>
       </View>
     </SafeAreaView>
   );
