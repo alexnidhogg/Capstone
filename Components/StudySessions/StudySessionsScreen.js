@@ -11,6 +11,4 @@ const StudySessionsScreen = () => {
     </SafeAreaView>
   );
 };
-
 export default StudySessionsScreen;
-
