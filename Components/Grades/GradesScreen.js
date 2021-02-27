@@ -2,6 +2,7 @@ import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import * as React from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
 
+
 const GradeScreen = () => {
   return (
     <SafeAreaView>
