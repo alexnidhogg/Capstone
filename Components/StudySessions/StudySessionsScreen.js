@@ -5,7 +5,6 @@ import { Style } from './StudySessionsStyle'
 
 const StudySessionsScreen = () => {
   return (
-    <SafeAreaView>
       <View style={Style.TitleBlock}>
 
         <Text style={Style.Title}>
@@ -21,10 +20,8 @@ const StudySessionsScreen = () => {
             ))
           }
         </ScrollView>
-      </View>
 
-      <View style={Style.SessionBlock}>
-        <ScrollView>
+        <ScrollView style={Style.Sessions}>
           {
             Sessions.map((item, key) => (
               <View style={Style.Session} key={key}>
@@ -36,19 +33,19 @@ const StudySessionsScreen = () => {
             ))
           }
         </ScrollView>
+
+        <View style={Style.Buttons}>
+          <Button title="Create" style={Style.Buttons}>
+
+          </Button>
+
+          <Button title="Back" style={Style.Buttons}>
+
+          </Button>
+        </View>
+
+
       </View>
-      <View style={Style.ButtonBlock}>
-
-        <Button title="Create" style={Style.Buttons}>
-
-        </Button>
-
-        <Button title="Back" style={Style.Buttons}>
-
-        </Button>
-
-      </View>
-    </SafeAreaView>
   );
 };
 

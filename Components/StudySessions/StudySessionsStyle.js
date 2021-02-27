@@ -22,6 +22,7 @@ const Style = StyleSheet.create({
     textAlign: "right"
   },
   Class: {
+    flexGrow: 0,
     fontSize: 20,
     padding:10,
     borderWidth: 5,
@@ -31,17 +32,16 @@ const Style = StyleSheet.create({
     flexDirection: "row"
   },
   Buttons: {
-    alignSelf: 'flex-end',
-   // padding: 8
+    flexDirection: "row",
+    padding: 8,
+    justifyContent: "space-around"
   },
   TitleBlock: {
-   // flex: 3
+    //flexGrow: 1,
   },
-  SessionBlock: {
-    //flex: 6
-  },
-  ButtonBlock: {
-   // flex: 1
+  Sessions: {
+    flexShrink: 1,
+    maxHeight: "70%"
   }
 });
 
