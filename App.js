@@ -2,15 +2,22 @@ import * as React from 'react';
 import 'react-native-gesture-handler';
 import MainMenuScreen from './Components/MainMenu/MainMenuScreen';
 import StudySessionsScreen from './Components/StudySessions/StudySessionsScreen';
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
 
 const NavigationController = () => {
   return (
     <NavigationContainer>
-      <Nav.Navigator initialRouteName="StudySessions">
-        <Nav.Screen name="MainMenu" component={MainMenuScreen}/>
-        <Nav.Screen name="StudySessions" component={StudySessionsScreen}/>
+      <Nav.Navigator initialRouteName="MainMenu">
+        <Nav.Screen
+          name="MainMenu"
+          component={MainMenuScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: 'slateblue',
+            },
+          }}></Nav.Screen>
+        <Nav.Screen name="StudySessions" component={StudySessionsScreen} />
       </Nav.Navigator>
     </NavigationContainer>
   );
