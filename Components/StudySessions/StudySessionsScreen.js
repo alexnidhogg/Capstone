@@ -1,39 +1,49 @@
 import {SafeAreaView, Text, View, Button, ScrollView, Modal} from 'react-native';
 import * as React from 'react';
+import { Style } from './StudySessionsStyle'
 
 
 const StudySessionsScreen = () => {
   return (
     <SafeAreaView>
-      <View>
-        <Text>
+      <View style={Style.TitleBlock}>
+
+        <Text style={Style.Title}>
           Study Sessions
         </Text>
 
-        <ScrollView horizontal="true">
+        <ScrollView style={Style.Classes} horizontal={true}>
           {
             Topics.map((item, key) =>(
-              <Text key={key}>{item}</Text>
-            ))
-          }
-        </ScrollView>
-
-        <ScrollView>
-          {
-            Sessions.map((item, key) => (
-              <View>
-                <Text>{item.StartDate}</Text>
-                <Text>{item.EndDate}</Text>
-                <Text>{item.Notification}</Text>
+              <View key={key} style={Style.Class}>
+                <Text>{item}</Text>
               </View>
             ))
           }
         </ScrollView>
+      </View>
 
-        <Button title="Create">
+      <View style={Style.SessionBlock}>
+        <ScrollView>
+          {
+            Sessions.map((item, key) => (
+              <View style={Style.Session} key={key}>
+                <Text style={Style.SessionLeft}>{item.StartDate}</Text>
+                <Text style={Style.SessionLeft}> - </Text>
+                <Text style={Style.SessionLeft}>{item.EndDate}</Text>
+                <Text style={Style.SessionRight}>{item.Notification}</Text>
+              </View>
+            ))
+          }
+        </ScrollView>
+      </View>
+      <View style={Style.ButtonBlock}>
+
+        <Button title="Create" style={Style.Buttons}>
 
         </Button>
-        <Button title="Back">
+
+        <Button title="Back" style={Style.Buttons}>
 
         </Button>
 
@@ -61,6 +71,25 @@ let Sessions = [];
 Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
 Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
 Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
+Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
+Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
+Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
+Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
+Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
+Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
+Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
+Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
+Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
+Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
+Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
+Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
+
 
 
 export default StudySessionsScreen;
