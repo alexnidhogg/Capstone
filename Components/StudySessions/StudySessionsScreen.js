@@ -57,7 +57,7 @@ class StudySession {
   }
 }
 
-let Sessions = []
+let Sessions = [];
 Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
 Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
 Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");

@@ -6,19 +6,24 @@ import {
 } from 'react-native-responsive-screen';
 import logo from './cal.jpg';
 import grades from './grades.jpg';
+import {
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
+import { useNavigation } from "@react-navigation/core";
 
 const ClassObject = (props) => {
+  const navigation = useNavigation();
   return (
-    <View style={styles.classIcon}>
-      <Image
-        style={styles.img}
-        source={{uri: props.imgSrc}}
+    <TouchableHighlight onPress={() => navigation.navigate('Grades')}>
+      <View style={styles.classIcon}>
+        <Image style={styles.img} source={{uri: props.imgSrc}} />
+        <Text style={styles.className}>{props.title}</Text>
+        <Image style={styles.cal} source={logo} />
 
-      />
-      <Text style={styles.className}>{props.title}</Text>
-      <Image style={styles.cal} source={logo} />
-      <Image style={styles.grade} source={grades}/>
-    </View>
+        <Image style={styles.grade} source={grades} />
+      </View>
+    </TouchableHighlight>
   );
 };
 const styles = StyleSheet.create({
@@ -30,12 +35,12 @@ const styles = StyleSheet.create({
     fontFamily: 'sans',
     zIndex: 1,
     padding: 10,
-    backgroundColor:'grey',
+    backgroundColor: 'grey',
     borderRadius: 10,
     textAlign: 'right',
   },
   classIcon: {
-    marginTop:30,
+    marginTop: 30,
     borderRadius: 10,
     alignItems: 'center',
     padding: 20,
