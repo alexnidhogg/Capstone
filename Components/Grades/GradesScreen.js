@@ -5,15 +5,17 @@ import {ScrollView} from 'react-native-gesture-handler';
 const GradeScreen = () => {
   return (
     <SafeAreaView>
-      <View>
+      <View style={styles.SessionBlock}>
         <Text>Returned Assignments</Text>
         <ScrollView horizontal="true">
           {Assignments.map((item, key) => (
-            <View>
+            <View style={styles.Assignments} key={key}>
               <Text style={styles.nameTxt}>{item.Name}</Text>
-              <Text>{item.Assigned}</Text>
-              <Text>Grade Recvieved: {item.Grade}</Text>
-              <Text>{item.Feedback}</Text>
+              <View>
+                <Text style={styles.Details}>{item.Assigned}</Text>
+                <Text style={styles.Details}>Grade Recvieved: {item.Grade}</Text>
+                <Text style={styles.Details}>{item.Feedback}</Text>
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -59,9 +61,18 @@ Assignments[Assignments.length] = new Assignment(
 
 const styles = StyleSheet.create({
   nameTxt: {
-    fontSize: 24,
+    textAlign: 'right'
+  },
+  Assignments: {
+    flexDirection: "row",
+    borderWidth: 2,
+    borderColor: "#9999aa"
+  },
+  Details: {
+    padding: 5,
+    marginLeft: "auto",
+    alignSelf: "stretch",
+    textAlign: "right"
   }
-
-
 });
 export default GradeScreen;

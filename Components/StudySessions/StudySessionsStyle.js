@@ -32,16 +32,16 @@ const Style = StyleSheet.create({
   },
   Buttons: {
     alignSelf: 'flex-end',
-    padding: 8
+   // padding: 8
   },
   TitleBlock: {
-    flex: 3
+   // flex: 3
   },
   SessionBlock: {
-    flex: 6
+    //flex: 6
   },
   ButtonBlock: {
-    flex: 1
+   // flex: 1
   }
 });
 
