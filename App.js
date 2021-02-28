@@ -5,6 +5,8 @@ import StudySessionsScreen from './Components/StudySessions/StudySessionsScreen'
 import GradesScreen from './Components/Grades/GradesScreen'
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
+import ViewStudySession from "./Components/StudySessions/ViewStudySession";
+import CreateStudySession from "./Components/StudySessions/CreateStudySession";
 
 const NavigationController = () => {
   return (
@@ -20,6 +22,8 @@ const NavigationController = () => {
           }}></Nav.Screen>
         <Nav.Screen name="StudySessions" component={StudySessionsScreen} />
         <Nav.Screen name="Grades" component={GradesScreen} />
+        <Nav.Screen name="ViewStudySession" component={ViewStudySession} />
+        <Nav.Screen name="CreateStudySession" component={CreateStudySession} />
       </Nav.Navigator>
     </NavigationContainer>
   );
