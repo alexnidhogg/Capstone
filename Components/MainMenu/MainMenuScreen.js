@@ -7,7 +7,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { SafeAreaView, Text, View, Button, StyleSheet } from "react-native";
-
+//
 const MainMenuScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{backgroundColor: '#fff', height: hp('100%')}}>
