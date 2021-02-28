@@ -1,9 +1,11 @@
 import {SafeAreaView, Text, View, Button, ScrollView, Modal} from 'react-native';
 import * as React from 'react';
 import { Style } from './StudySessionsStyle'
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import CreateStudySession from "./CreateStudySession";
 
 
-const StudySessionsScreen = () => {
+const StudySessionsScreen = ({navigation}) => {
   return (
       <View style={Style.TitleBlock}>
 
@@ -25,26 +27,36 @@ const StudySessionsScreen = () => {
           {
             Sessions.map((item, key) => (
               <View style={Style.Session} key={key}>
-                <Text style={Style.SessionLeft}>{item.StartDate}</Text>
-                <Text style={Style.SessionLeft}> - </Text>
-                <Text style={Style.SessionLeft}>{item.EndDate}</Text>
-                <Text style={Style.SessionRight}>{item.Notification}</Text>
+                <TouchableWithoutFeedback
+                  onPress={() => navigation.navigate('ViewStudySession')}
+                  style={Style.Session}
+                >
+                  <Text style={Style.SessionLeft}>{item.StartDate}</Text>
+                  <Text style={Style.SessionLeft}> - </Text>
+                  <Text style={Style.SessionLeft}>{item.EndDate}</Text>
+                  <Text style={Style.SessionRight}>{item.Notification}</Text>
+                </TouchableWithoutFeedback>
               </View>
             ))
           }
         </ScrollView>
+        <View style={Style.Bottom}>
+          <View style={Style.Buttons}>
+            <Button
+              title="Create"
+              style={Style.Buttons}
+              onPress={() => navigation.navigate("CreateStudySession")}
+            >
+            </Button>
 
-        <View style={Style.Buttons}>
-          <Button title="Create" style={Style.Buttons}>
-
-          </Button>
-
-          <Button title="Back" style={Style.Buttons}>
-
-          </Button>
+            <Button
+              title="Back"
+              style={Style.Buttons}
+              onPress={() => navigation.goBack()}
+            >
+            </Button>
+          </View>
         </View>
-
-
       </View>
   );
 };
