@@ -14,11 +14,10 @@ import {
 } from 'react-native-responsive-screen';
 import * as ToastAndroid from 'react-native';
 import {useState} from 'react/cjs/react.production.min';
-
+//
 const LoginScreen = ({navigation}) => {
   const [user, onChangeText] = React.useState('');
   const [pass, passget] = React.useState('');
-
   return (
     <SafeAreaView>
       <View style={styles.LoginView}>
