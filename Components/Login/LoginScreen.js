@@ -14,6 +14,7 @@ import {
 } from 'react-native-responsive-screen';
 import * as ToastAndroid from 'react-native';
 import {useState} from 'react/cjs/react.production.min';
+import auth from '@react-native-firebase/auth';
 //
 const LoginScreen = ({navigation}) => {
   const [user, onChangeText] = React.useState('');
@@ -36,11 +37,14 @@ const LoginScreen = ({navigation}) => {
           style={styles.submit}
           title="Login"
           onPress={() => {
-            if (user == 'test' && pass == 'test') {
-              console.log(user);
-              navigation.navigate('MainMenu');
-              return;
-            }
+            console.log(user);
+            auth()
+              .signInWithEmailAndPassword(user, pass)
+              .then(() => {
+                navigation.navigate('MainMenu');
+              });
+
+            return;
           }}
         />
       </View>
