@@ -2,6 +2,7 @@ import {SafeAreaView, Text, View, Button, ScrollView, Modal, TextInput} from 're
 import * as React from 'react';
 import { Style } from './StudySessionsStyle'
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as Firebase from '@react-native-firebase/app'
 
 const CreateStudySessionsScreen = ({navigation}) => {
   return (
@@ -33,7 +34,10 @@ const CreateStudySessionsScreen = ({navigation}) => {
           <Button
             title="Create"
             style={Style.Buttons}
-            onPress={() => navigation.navigate("CreateStudySession")}
+            onPress={
+              //() => navigation.navigate("CreateStudySession")
+              () => CreateStudySession()
+            }
           >
           </Button>
 
@@ -47,6 +51,11 @@ const CreateStudySessionsScreen = ({navigation}) => {
       </View>
     </View>
   )
+}
+
+function CreateStudySession() {
+  const Connection = Firebase.ReactNativeFirebase;
+
 }
 
 export default CreateStudySessionsScreen;
