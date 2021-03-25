@@ -9,6 +9,7 @@ import {SafeAreaView, Text, View, Button, StyleSheet} from 'react-native';
 import auth from '@react-native-firebase/auth';
 //
 const MainMenuScreen = ({navigation}) => {
+  console.log(auth().currentUser.uid);
   return (
     <SafeAreaView style={{backgroundColor: '#fff', height: hp('100%')}}>
       <View>

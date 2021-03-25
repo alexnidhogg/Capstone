@@ -32,7 +32,6 @@ const NavigationController = () => {
     return null;
   }
   if (!user){
-    console.log("fuck me daddy");
     text = 'Login';
   }
   return (
