@@ -3,12 +3,17 @@ import * as React from 'react';
 import { Style } from './StudySessionsStyle'
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import CreateStudySession from "./CreateStudySession";
+import firestore from '@react-native-firebase/firestore'
+import { timestamp } from '@react-native-firebase/firestore'
+import * as DateFix from '../DateFix/DateFix'
+
+
 
 
 const StudySessionsScreen = ({navigation}) => {
+
   return (
       <View style={Style.TitleBlock}>
-
         <Text style={Style.Title}>
           Study Sessions
         </Text>
@@ -24,21 +29,7 @@ const StudySessionsScreen = ({navigation}) => {
         </ScrollView>
 
         <ScrollView style={Style.Sessions}>
-          {
-            Sessions.map((item, key) => (
-              <View style={Style.Session} key={key}>
-                <TouchableWithoutFeedback
-                  onPress={() => navigation.navigate('ViewStudySession')}
-                  style={Style.Session}
-                >
-                  <Text style={Style.SessionLeft}>{item.StartDate}</Text>
-                  <Text style={Style.SessionLeft}> - </Text>
-                  <Text style={Style.SessionLeft}>{item.EndDate}</Text>
-                  <Text style={Style.SessionRight}>{item.Notification}</Text>
-                </TouchableWithoutFeedback>
-              </View>
-            ))
-          }
+          {DisplayStudySessions()}
         </ScrollView>
         <View style={Style.Bottom}>
           <View style={Style.Buttons}>
@@ -61,6 +52,46 @@ const StudySessionsScreen = ({navigation}) => {
   );
 };
 
+function DisplayStudySessions(){
+
+  let Sessions = [];
+
+  const studySessions = firestore().collection('StudySession').get().then(
+    (values) => {
+      //alert(DateFix.ConvertGoogleToMonthDate(values.docs[0].get('StartDate')))
+      for(var x = 0; x < values.docs.length; x++){
+        let startDate = values.docs[0].get('StartDate')
+        let endDate = values.docs[0].get('EndDate')
+        //alert(DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate))
+        Sessions.push(
+          StudySession(
+            DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
+            DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
+            values.docs[x].get('ClassId').toString(),
+            ""
+          )
+        );
+      }
+    }
+  ).catch((error) => {
+
+  });
+
+  return Sessions.map((item, key) => (
+    <View style={Style.Session} key={key}>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate('ViewStudySession')}
+        style={Style.Session}
+      >
+        <Text style={Style.SessionLeft}>{item.StartDate}</Text>
+        <Text style={Style.SessionLeft}> - </Text>
+        <Text style={Style.SessionLeft}>{item.EndDate}</Text>
+        <Text style={Style.SessionRight}>{item.Notification}</Text>
+      </TouchableWithoutFeedback>
+    </View>
+  ))
+}
+
 let Topics = [];
 Topics[Topics.length] = "Math";
 Topics[Topics.length] = "English";
@@ -76,30 +107,4 @@ class StudySession {
   }
 }
 
-let Sessions = [];
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-Sessions[Sessions.length] = new StudySession("5:00 pm", "7:00 pm April 12", "Math", "");
-Sessions[Sessions.length] = new StudySession("2:00 pm", "6:00 pm April 15", "Math", "Conflict!");
-Sessions[Sessions.length] = new StudySession("9:00 am", "12:00 pm April 17", "Math", "Teacher Hosted");
-
-
-
 export default StudySessionsScreen;
-

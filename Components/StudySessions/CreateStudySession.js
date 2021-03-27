@@ -54,7 +54,6 @@ const CreateStudySessionsScreen = ({navigation}) => {
 }
 
 function CreateStudySession() {
-  const Connection = Firebase.ReactNativeFirebase;
 
 }
 
