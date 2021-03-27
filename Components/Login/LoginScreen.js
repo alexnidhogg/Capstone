@@ -47,6 +47,13 @@ const LoginScreen = ({navigation}) => {
             return;
           }}
         />
+        <Text
+          style={styles.signUp}
+          onPress={() => {
+            navigation.navigate('SignUp');
+          }}>
+          {'Sign Up'}
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -60,6 +67,13 @@ const styles = StyleSheet.create({
   },
   submit: {
     color: 'darkslategrey',
+  },
+  signUp: {
+    color: 'blue',
+    textAlign: 'center',
+    margin: 10,
+    opacity: 75,
+    textShadowRadius: 10,
   },
 });
 export default LoginScreen;
