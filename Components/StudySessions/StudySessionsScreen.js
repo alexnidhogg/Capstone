@@ -1,16 +1,54 @@
 import {SafeAreaView, Text, View, Button, ScrollView, Modal} from 'react-native';
 import * as React from 'react';
+import {useState} from 'react';
 import { Style } from './StudySessionsStyle'
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import CreateStudySession from "./CreateStudySession";
 import firestore from '@react-native-firebase/firestore'
-import { timestamp } from '@react-native-firebase/firestore'
 import * as DateFix from '../DateFix/DateFix'
 
-
-
-
 const StudySessionsScreen = ({navigation}) => {
+
+  function StudySessionLoad() {
+
+    firestore().collection('StudySession').get().then(
+      (values) => {
+        var Sessions = []
+        for(var x = 0; x < values.docs.length; x++){
+          let startDate = values.docs[x].get('StartDate')
+          let endDate = values.docs[x].get('EndDate')
+          Sessions[x] =
+            {
+              startDate: DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
+              endDate: DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
+              course: values.docs[x].get('ClassId').toString(),
+              notification: ""
+            }
+        }
+        load(
+          Sessions.map((item, key) => (
+            <View style={Style.Session} key={key}>
+              <TouchableWithoutFeedback
+                onPress={() => navigation.navigate('ViewStudySession')}
+                style={Style.Session}
+              >
+                <Text style={Style.SessionLeft}>{item.startDate}</Text>
+                <Text style={Style.SessionLeft}> - </Text>
+                <Text style={Style.SessionLeft}>{item.endDate}</Text>
+                <Text style={Style.SessionRight}>{item.notification}</Text>
+              </TouchableWithoutFeedback>
+            </View>
+          ))
+        )
+      }
+    ).catch((error) => {
+    });
+  }
+
+  const [loaded, load] = useState(<View/>)
+  const [tab, changeTab] = useState("none")
+
+  StudySessionLoad()
 
   return (
       <View style={Style.TitleBlock}>
@@ -29,7 +67,7 @@ const StudySessionsScreen = ({navigation}) => {
         </ScrollView>
 
         <ScrollView style={Style.Sessions}>
-          {DisplayStudySessions()}
+          {loaded}
         </ScrollView>
         <View style={Style.Bottom}>
           <View style={Style.Buttons}>
@@ -51,46 +89,6 @@ const StudySessionsScreen = ({navigation}) => {
       </View>
   );
 };
-
-function DisplayStudySessions(){
-
-  let Sessions = [];
-
-  const studySessions = firestore().collection('StudySession').get().then(
-    (values) => {
-      //alert(DateFix.ConvertGoogleToMonthDate(values.docs[0].get('StartDate')))
-      for(var x = 0; x < values.docs.length; x++){
-        let startDate = values.docs[0].get('StartDate')
-        let endDate = values.docs[0].get('EndDate')
-        //alert(DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate))
-        Sessions.push(
-          StudySession(
-            DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
-            DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
-            values.docs[x].get('ClassId').toString(),
-            ""
-          )
-        );
-      }
-    }
-  ).catch((error) => {
-
-  });
-
-  return Sessions.map((item, key) => (
-    <View style={Style.Session} key={key}>
-      <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('ViewStudySession')}
-        style={Style.Session}
-      >
-        <Text style={Style.SessionLeft}>{item.StartDate}</Text>
-        <Text style={Style.SessionLeft}> - </Text>
-        <Text style={Style.SessionLeft}>{item.EndDate}</Text>
-        <Text style={Style.SessionRight}>{item.Notification}</Text>
-      </TouchableWithoutFeedback>
-    </View>
-  ))
-}
 
 let Topics = [];
 Topics[Topics.length] = "Math";
