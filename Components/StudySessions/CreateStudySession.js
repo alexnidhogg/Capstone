@@ -32,12 +32,13 @@ const CreateStudySessionsScreen = ({navigation}) => {
 
   function CreateStudySession() {
     firestore().collection('StudySession').add({
-      ClassId: '/Course/' + course,
+      ClassId: course,
       EndDate: endDate,
       OrganizerID: auth().currentUser.uid,
+      Description: description,
       StartDate: startDate,
       Private: false
-    })
+    }).then((value) => {navigation.goBack()})
   }
 
   firestore().collection('Course').get().then((values) => {
@@ -45,7 +46,7 @@ const CreateStudySessionsScreen = ({navigation}) => {
     let courseListNew = []
     //alert(courses.length)
     for(var x = 0; x < courses.length; x++){
-      courseListNew[x] = {label: courses[x].get('CourseName'), value: courses[x].get('CourseName')}
+      courseListNew[x] = {label: courses[x].get('CourseName'), value: courses[x].get('CourseId')}
     }
     updateCourseList(courseListNew)
     //DropDownController.controller.addItems(courseList)
@@ -108,7 +109,9 @@ const CreateStudySessionsScreen = ({navigation}) => {
             style={Style.Buttons}
             onPress={
               //() => navigation.navigate("CreateStudySession")
-              () => CreateStudySession()
+              () => {
+                CreateStudySession()
+              }
             }
           >
           </Button>

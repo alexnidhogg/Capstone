@@ -6,12 +6,13 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import CreateStudySession from "./CreateStudySession";
 import firestore from '@react-native-firebase/firestore'
 import * as DateFix from '../DateFix/DateFix'
+import auth from "@react-native-firebase/auth";
 
 const StudySessionsScreen = ({navigation}) => {
 
   function StudySessionLoad() {
 
-    firestore().collection('StudySession').get().then(
+    firestore().collection('StudySession').orderBy('StartDate').get().then(
       (values) => {
         var Sessions = []
         for(var x = 0; x < values.docs.length; x++){
@@ -22,33 +23,131 @@ const StudySessionsScreen = ({navigation}) => {
               startDate: DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
               endDate: DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
               course: values.docs[x].get('ClassId').toString(),
-              notification: ""
+              notification: "",
+              sessionId: values.docs[x].id
             }
         }
-        load(
-          Sessions.map((item, key) => (
-            <View style={Style.Session} key={key}>
-              <TouchableWithoutFeedback
-                onPress={() => navigation.navigate('ViewStudySession')}
-                style={Style.Session}
-              >
-                <Text style={Style.SessionLeft}>{item.startDate}</Text>
-                <Text style={Style.SessionLeft}> - </Text>
-                <Text style={Style.SessionLeft}>{item.endDate}</Text>
-                <Text style={Style.SessionRight}>{item.notification}</Text>
-              </TouchableWithoutFeedback>
-            </View>
-          ))
-        )
+        setraw(Sessions)
+        setWaiting(false)
+        //UpdateStudySessionDisplay()
       }
     ).catch((error) => {
     });
   }
 
-  const [loaded, load] = useState(<View/>)
-  const [tab, changeTab] = useState("none")
+  function UpdateStudySessionDisplay(tab = 'ALL') {
+    //alert(currentTab)
+    if(tab == "ALL") {
+      load(
+        raw.map((item, key) => (
+        <View style={Style.Session} key={key}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              //alert(item.sessionId)
+              navigation.navigate('ViewStudySession', {sessionId: item.sessionId})
+            }}
+            style={Style.Session}
+          >
+            <Text style={Style.SessionLeft}>{item.startDate}</Text>
+            <Text style={Style.SessionLeft}> - </Text>
+            <Text style={Style.SessionLeft}>{item.endDate}</Text>
+            <Text style={Style.SessionRight}>{item.notification}</Text>
+          </TouchableWithoutFeedback>
+        </View>
+        ))
+      )
+    } else {
+      var rawReturn = []
+      for (var i = 0; i < raw.length;i ++)
+      {
+        //alert(raw[i].course)
+        if(raw[i].course == tab){
+          var sessionId = raw[i].sessionId
+          rawReturn[rawReturn.length] = <View style={Style.Session} key={rawReturn.length}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                //alert(item.sessionId)
+                navigation.navigate('ViewStudySession', {sessionId: sessionId})
+              }}
+              style={Style.Session}
+            >
+              <Text style={Style.SessionLeft}>{raw[i].startDate}</Text>
+              <Text style={Style.SessionLeft}> - </Text>
+              <Text style={Style.SessionLeft}>{raw[i].endDate}</Text>
+              <Text style={Style.SessionRight}>{raw[i].notification}</Text>
+            </TouchableWithoutFeedback>
+          </View>
+        }
+      }
+      load(rawReturn)
+    }
+  }
 
-  StudySessionLoad()
+  function LoadCourses() {
+    firestore().collection('Course').where('CourseId', 'in', courseLinks).get().then(
+      (values) => {
+        var CoursesRaw = [{
+          CourseId: 'ALL',
+          CourseName: 'All'
+        }]
+        for (var i = 0; i < values.docs.length; i++){
+          CoursesRaw[i+1] = {
+            CourseId: courseLinks[i],
+            CourseName: values.docs[i].get('CourseName')
+          }
+        }
+        setCourses(CoursesRaw)
+        setWaiting(false)
+      }
+    )
+  }
+
+  function LoadCourseLinks() {
+    firestore().collection('CourseRecord').where('UserId', '==', auth().currentUser.uid).get().then(
+      (values) => {
+        var CourseLinksRaw = []
+        for (var i = 0; i < values.docs.length; i++){
+          CourseLinksRaw[i] = values.docs[i].get('CourseId')
+        }
+        setCourseLinks(CourseLinksRaw)
+        setWaiting(false)
+      }
+    )
+  }
+
+  const [SessionDisplay, load] = useState(<View/>)
+  const [raw, setraw] = useState([]);
+  const [sessions, loadsessions] = useState([])
+  const [tab, changeTab] = useState("none")
+  const [needsLoad, setLoad] = useState(true)
+
+  const [courseLinks, setCourseLinks] = useState([])
+  const [loadedCourseLinks, setLoadedCourseLinks] = useState(false)
+
+  const [courses, setCourses] = useState([])
+  const [loadedCourses, setLoadedCourses] = useState(false)
+
+  const [waiting, setWaiting] = useState(false)
+
+  const [currentTab, setCurrentTab] = useState('ALL');
+
+  if(!waiting){
+    if(needsLoad) {
+      setWaiting(true)
+      setLoad(false)
+      StudySessionLoad()
+    } else if (!needsLoad && !loadedCourseLinks) {
+      setWaiting(true)
+      setLoadedCourseLinks(true)
+      LoadCourseLinks()
+    } else if (loadedCourseLinks && !loadedCourses) {
+      setWaiting(true)
+      setLoadedCourses(true)
+      LoadCourses()
+      UpdateStudySessionDisplay()
+    }
+  }
+
 
   return (
       <View style={Style.TitleBlock}>
@@ -58,16 +157,24 @@ const StudySessionsScreen = ({navigation}) => {
 
         <ScrollView style={Style.Classes} horizontal={true}>
           {
-            Topics.map((item, key) =>(
+            courses.map((item, key) =>(
               <View key={key} style={Style.Class}>
-                <Text>{item}</Text>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setCurrentTab(item.CourseId)
+                    UpdateStudySessionDisplay(item.CourseId)
+                  }}
+                  style={Style.Session}
+                >
+                <Text>{item.CourseName}</Text>
+                </TouchableWithoutFeedback>
               </View>
             ))
           }
         </ScrollView>
 
         <ScrollView style={Style.Sessions}>
-          {loaded}
+          {SessionDisplay}
         </ScrollView>
         <View style={Style.Bottom}>
           <View style={Style.Buttons}>
@@ -89,20 +196,5 @@ const StudySessionsScreen = ({navigation}) => {
       </View>
   );
 };
-
-let Topics = [];
-Topics[Topics.length] = "Math";
-Topics[Topics.length] = "English";
-Topics[Topics.length] = "Science";
-Topics[Topics.length] = "Gym";
-
-class StudySession {
-  constructor(StartDate, EndDate, Topic, Notification){
-    this.StartDate = StartDate;
-    this.EndDate = EndDate;
-    this.Topic = Topic;
-    this.Notification = Notification;
-  }
-}
 
 export default StudySessionsScreen;
