@@ -1,6 +1,6 @@
 export function ConvertGoogleToMonthDate(timestamptofix) {
   var date = timestamptofix.toDate()
-  return GetMonthName(date.getMonth()) + " " + date.getDay()
+  return GetMonthName(date.getMonth()) + " " + date.getDate()
 }
 
 export function ConvertGoogleToTime(timestamptofix) {
@@ -13,6 +13,9 @@ export function ConvertGoogleToTime(timestamptofix) {
     returnString += "12"
   } else if (hour > 12) {
     returnString += (hour - 12).toString()
+    ending = "PM"
+  } else {
+    returnString += "12"
     ending = "PM"
   }
   returnString += ":"
