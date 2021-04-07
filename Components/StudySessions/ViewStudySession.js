@@ -1,19 +1,109 @@
 import {SafeAreaView, Text, View, Button, ScrollView, Modal} from 'react-native';
 import * as React from 'react';
 import { Style } from './StudySessionsStyle'
+import { useState } from "react";
+import firestore from "@react-native-firebase/firestore";
+import * as DateFix from "../DateFix/DateFix";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as Shorten from "../DateFix/Shorten";
 
-const StudySessionsScreen = ({navigation}) => {
+const StudySessionsScreen = ({route, navigation}) => {
+
+  const { sessionId } = route.params;
+  //alert(sessionId)
+
+  const [session, load] = useState({
+    startDate: " ",
+    endDate: " ",
+    courseId: " ",
+    courseName: " ",
+    organizer: " ",
+    sessionId: " ",
+    userId: " "
+  })
+
+  if(session.courseId == " ")
+  {
+    firestore().collection('StudySession').doc(sessionId).get().then(
+      (values) => {
+
+        let session_raw =
+          {
+            startDate: DateFix.ConvertGoogleToMonthDate(values.get('StartDate'))
+              + " " + DateFix.ConvertGoogleToTime(values.get('StartDate')),
+            endDate: DateFix.ConvertGoogleToMonthDate(values.get('EndDate')) + " " + DateFix.ConvertGoogleToTime(values.get('EndDate')),
+            description: values.get('Description'),
+            courseName: " ",
+            courseId: values.get('ClassId'),
+            organizer: " ",
+            notification: "",
+            sessionId: values.id,
+            userId: values.get('OrganizerID')
+          }
+        load(session_raw)
+
+      }
+    ).catch((error) => {
+      alert(error)
+    });
+  }
+  else if (session.userId != " " && session.organizer == " ")
+  {
+    firestore().collection('Users').where('UserId','==', session.userId).get().then(
+      (values) => {
+        //alert(values.docs[0])
+        let session_raw =
+          {
+            startDate: session.startDate,
+            endDate: session.endDate,
+            description: session.description,
+            courseName: " ",
+            courseId: session.courseId,
+            organizer: values.docs[0].get('FirstName') + " " + values.docs[0].get('LastName'),
+            notification: "",
+            sessionId: session.sessionId,
+            userId: session.userId
+          }
+        load(session_raw)
+      }
+    ).catch((error) => {
+      alert(error)
+    });
+  }
+  else if (session.courseId != " " && session.courseName == " ")
+  {
+    //alert(session.courseId)
+
+    firestore().collection('Course').where('CourseId', '==', session.courseId).get().then(
+      (values) => {
+        let session_raw =
+          {
+            startDate: session.startDate,
+            endDate: session.endDate,
+            description: session.description,
+            courseName: values.docs[0].get('CourseName'),
+            courseId: session.courseId,
+            organizer: session.organizer,
+            notification: "",
+            sessionId: session.sessionId,
+            userId: session.userId
+          }
+        load(session_raw)
+      }
+    )
+  }
+
   return (
     <View style={Style.TitleBlock}>
       <Text style={Style.Title}>
-        {Topic} session at {StartTime.time} to {EndTime.time} on {StartTime.date}.
+        {session.courseName} session at {session.startDate} to {session.endDate}.
       </Text>
       <Text style={Style.NormalText}>
-        Organized By: {Organizer.name}
+        Organized By: {session.organizer}
       </Text>
       <ScrollView style={Style.Description}>
         <Text style={Style.NormalText}>
-          {Description}
+          {session.description}
         </Text>
       </ScrollView>
       <Text style={Style.NormalText}>
