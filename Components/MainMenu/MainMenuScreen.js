@@ -64,14 +64,6 @@ const MainMenuScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      <View>
-        <Button
-          style={{color: 'grey', borderRadius: 10, width: wp('80%')}}
-          title="View All Study Sessions"
-          onPress={() => navigation.navigate('StudySessions')}
-        />
-      </View>
     </ImageBackground>
   );
 };

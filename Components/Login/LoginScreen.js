@@ -18,7 +18,6 @@ import * as ToastAndroid from 'react-native';
 import {useState} from 'react/cjs/react.production.min';
 import auth from '@react-native-firebase/auth';
 
-//
 const LoginScreen = ({navigation}) => {
   const [user, onChangeText] = React.useState('');
   const [pass, passget] = React.useState('');
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
   },
   titleCont: {
     width: 400,
-    height: 60,
+    height: 50,
   },
 });
 export default LoginScreen;
