@@ -10,6 +10,7 @@ import ViewStudySession from './Components/StudySessions/ViewStudySession';
 import CreateStudySession from './Components/StudySessions/CreateStudySession';
 import {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
+import SignUpScreen from './Components/SignUp/SignUpScreen';
 
 const NavigationController = () => {
   var text = 'MainMenu';
@@ -31,7 +32,7 @@ const NavigationController = () => {
   if (initializaing) {
     return null;
   }
-  if (!user){
+  if (!user) {
     text = 'Login';
   }
   return (
@@ -41,16 +42,22 @@ const NavigationController = () => {
           name="MainMenu"
           component={MainMenuScreen}
           options={{
+            headerShown: false,
             headerStyle: {
               backgroundColor: 'slateblue',
             },
           }}
         />
-        <Nav.Screen name={'Login'} component={LoginScreen} />
+        <Nav.Screen
+          name={'Login'}
+          component={LoginScreen}
+          options={{headerShown: false}}
+        />
         <Nav.Screen name="StudySessions" component={StudySessionsScreen} />
         <Nav.Screen name="Grades" component={GradesScreen} />
         <Nav.Screen name="ViewStudySession" component={ViewStudySession} />
         <Nav.Screen name="CreateStudySession" component={CreateStudySession} />
+        <Nav.Screen name={'SignUp'} component={SignUpScreen} />
       </Nav.Navigator>
     </NavigationContainer>
   );
