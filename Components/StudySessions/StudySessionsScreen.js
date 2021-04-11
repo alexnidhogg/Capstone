@@ -7,6 +7,7 @@ import CreateStudySession from "./CreateStudySession";
 import firestore from '@react-native-firebase/firestore'
 import * as DateFix from '../DateFix/DateFix'
 import auth from "@react-native-firebase/auth";
+import { useFocusEffect } from '@react-navigation/native'
 
 const StudySessionsScreen = ({navigation}) => {
 
@@ -29,7 +30,10 @@ const StudySessionsScreen = ({navigation}) => {
         }
         setraw(Sessions)
         setWaiting(false)
-        //UpdateStudySessionDisplay()
+        if(courses != []) {
+          UpdateStudySessionDisplay(currentTab)
+        }
+
       }
     ).catch((error) => {
     });
@@ -44,7 +48,7 @@ const StudySessionsScreen = ({navigation}) => {
           <TouchableWithoutFeedback
             onPress={() => {
               //alert(item.sessionId)
-              navigation.navigate('ViewStudySession', {sessionId: item.sessionId})
+              navigation.navigate('ViewStudySession', {sessionId: item.sessionId, callback: onReturn})
             }}
             style={Style.Session}
           >
@@ -62,12 +66,12 @@ const StudySessionsScreen = ({navigation}) => {
       {
         //alert(raw[i].course)
         if(raw[i].course == tab){
-          var sessionId = raw[i].sessionId
+          const sessionId = raw[i].sessionId
           rawReturn[rawReturn.length] = <View style={Style.Session} key={rawReturn.length}>
             <TouchableWithoutFeedback
               onPress={() => {
                 //alert(item.sessionId)
-                navigation.navigate('ViewStudySession', {sessionId: sessionId})
+                navigation.navigate('ViewStudySession', {sessionId: sessionId, callback: onReturn})
               }}
               style={Style.Session}
             >
@@ -117,8 +121,6 @@ const StudySessionsScreen = ({navigation}) => {
 
   const [SessionDisplay, load] = useState(<View/>)
   const [raw, setraw] = useState([]);
-  const [sessions, loadsessions] = useState([])
-  const [tab, changeTab] = useState("none")
   const [needsLoad, setLoad] = useState(true)
 
   const [courseLinks, setCourseLinks] = useState([])
@@ -130,6 +132,7 @@ const StudySessionsScreen = ({navigation}) => {
   const [waiting, setWaiting] = useState(false)
 
   const [currentTab, setCurrentTab] = useState('ALL');
+
 
   if(!waiting){
     if(needsLoad) {
@@ -148,6 +151,9 @@ const StudySessionsScreen = ({navigation}) => {
     }
   }
 
+  const onReturn = () => {
+    setLoad(true)
+  }
 
   return (
       <View style={Style.TitleBlock}>
@@ -181,7 +187,10 @@ const StudySessionsScreen = ({navigation}) => {
             <Button
               title="Create"
               style={Style.Buttons}
-              onPress={() => navigation.navigate("CreateStudySession")}
+              onPress={() => {
+                  navigation.navigate("CreateStudySession", {callback: onReturn})
+                }
+              }
             >
             </Button>
 

@@ -22,13 +22,15 @@ let DropdownController = <DropDownPicker
 
 //let DropDownController = <DropDownPicker/>
 
-const CreateStudySessionsScreen = ({navigation}) => {
+const CreateStudySessionsScreen = ({route, navigation}) => {
 
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
   const [description, setDescription] = useState("")
   const [course, setCourse] = useState("")
   const [courseList, updateCourseList] = useState([])
+
+  const { callback } = route.params
 
   function CreateStudySession() {
     firestore().collection('StudySession').add({
@@ -38,7 +40,10 @@ const CreateStudySessionsScreen = ({navigation}) => {
       Description: description,
       StartDate: startDate,
       Private: false
-    }).then((value) => {navigation.goBack()})
+    }).then((value) => {
+      callback()
+      navigation.goBack()
+    })
   }
 
   firestore().collection('Course').get().then((values) => {
