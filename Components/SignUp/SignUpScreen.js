@@ -15,7 +15,7 @@ import {
 import * as ToastAndroid from 'react-native';
 import {useState} from 'react/cjs/react.production.min';
 import auth from '@react-native-firebase/auth';
-
+//Commemt
 const SignUpScreen = ({navigation}) => {
   const [user, onChangeText] = React.useState('');
   const [pass, passget] = React.useState('');

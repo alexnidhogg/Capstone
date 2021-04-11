@@ -45,15 +45,23 @@ const MainMenuScreen = ({navigation}) => {
       <Text style={styles.userNameText}>{auth().currentUser.email}</Text>
       <Text style={styles.userAreaHeader}>This Week</Text>
       <View style={styles.userDataArea}>
-        <View style={{flexDirection: 'row'}}>
-          <Image
+        <View style={{flexDirection: 'row',marginLeft: 25}}>
+          <TouchableOpacity
             style={styles.menuIcon}
-            source={require('./MainMenuAssets/assignments.png')}
-          />
-          <Image
+            onPress={() => navigation.navigate('Grades')}>
+            <Image
+              style={{width: 50, height: 50, marginLeft: 'auto'}}
+              source={require('./MainMenuAssets/assignments.png')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.menuIcon}
-            source={require('./MainMenuAssets/stats.png')}
-          />
+            onPress={() => navigation.navigate('StudySessions')}>
+            <Image
+              style={{width: 50, height: 50, marginLeft: 'auto'}}
+              source={require('./MainMenuAssets/stats.png')}
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.menuIcon}
             onPress={() => navigation.navigate('StudySessions')}>
