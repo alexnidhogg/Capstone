@@ -9,8 +9,7 @@ import * as Shorten from "../DateFix/Shorten";
 
 const StudySessionsScreen = ({route, navigation}) => {
 
-  const { sessionId } = route.params;
-  //alert(sessionId)
+  const { sessionId , callback } = route.params;
 
   const [session, load] = useState({
     startDate: " ",
@@ -125,7 +124,10 @@ const StudySessionsScreen = ({route, navigation}) => {
           <Button
             title="Back"
             style={Style.Buttons}
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              callback()
+              navigation.goBack()
+            }}
           >
 
           </Button>
