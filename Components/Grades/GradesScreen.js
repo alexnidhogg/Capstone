@@ -11,53 +11,60 @@ import {useState} from 'react';
 import * as React from 'react';
 import {
   ScrollView,
+  TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {Style} from '../StudySessions/StudySessionsStyle';
+import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const GradeScreen = ({navigation}) => {
   const [courseLinks, setCourseLinks] = useState([]);
   const [courses, setCourses] = useState([]);
   const [assignments, setAssignments] = useState([]);
-
+  const [activityID, setActID] = useState([]);
   function LoadUserActivities() {
-    var AssignmentsList = [];
-
     firestore()
       .collection('Activity')
       .where('CourseID', '==', 'TestCourse1')
       .get()
       .then((value) => {
+        var id = [];
         var assignmentsRaw = [
           {
+            ActivityID: 'zz',
             description: 'nn',
             totalMarks: 14,
             weight: 12,
+            sub: '',
           },
         ];
-        for (var i = 0; i < value.docs.length; i++){
+        for (var i = 0; i < value.docs.length; i++) {
+          id[i] = value.docs[i].get('ActivityID');
           assignmentsRaw[i] = {
+            activityID: value.docs[i].get('ActivityID'),
             description: value.docs[i].get('ActivityTitle'),
             totalMarks: value.docs[i].get('TotalMarks'),
             weight: value.docs[i].get('Weight'),
           };
         }
         setAssignments(assignmentsRaw);
+        setWaiting(false);
       });
   }
   function LoadCourseLinks() {
     firestore()
-      .collection('CourseRecord')
-      .where('UserId', '==', auth().currentUser.uid)
+      .collection('CourseMembership')
+      .where('UserID', '==', auth().currentUser.uid)
       .get()
       .then((values) => {
         var CourseLinksRaw = [];
         for (var i = 0; i < values.docs.length; i++) {
-          CourseLinksRaw[i] = values.docs[i].get('CourseId');
+          CourseLinksRaw[i] = values.docs[i].get('CourseID');
         }
         setCourseLinks(CourseLinksRaw);
+        setWaiting(false);
       });
   }
   function LoadCourses() {
@@ -79,13 +86,35 @@ const GradeScreen = ({navigation}) => {
           };
         }
         setCourses(CoursesRaw);
+        setWaiting(false);
       });
   }
-  LoadCourseLinks();
-  setTimeout(() => {
-    LoadCourses();
-  }, 2000);
-  LoadUserActivities();
+
+  const [needsLoad, setLoad] = useState(true);
+  const [waiting, setWaiting] = useState(false);
+  const [loadedCourses, setLoadedCourses] = useState(false);
+  const [loadedCourseLinks, setLoadedCourseLinks] = useState(false);
+
+  if (!waiting) {
+    if (needsLoad) {
+      setWaiting(true);
+      setLoad(false);
+      LoadUserActivities();
+    } else if (!needsLoad && !loadedCourseLinks) {
+      setWaiting(true);
+      setLoadedCourseLinks(true);
+      LoadCourseLinks();
+    } else if (loadedCourseLinks && !loadedCourses) {
+      setWaiting(true);
+      setLoadedCourses(true);
+      LoadCourses();
+    }
+  }
+
+  const onReturn = () => {
+    setLoad(true);
+  };
+
   return (
     <ImageBackground
       source={require('../Login/back1.png')}
@@ -97,7 +126,18 @@ const GradeScreen = ({navigation}) => {
               {assignments.map((item, key) => (
                 <View key={key}>
                   <View style={{flexDirection: 'row'}}>
-                    <Image source={require('../Login/user.png')} style={{width: 50, height: 50}}/>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('Assignment', {
+                          sessionId: item.activityID,
+                          callback: onReturn,
+                        })
+                      }>
+                      <Image
+                        source={require('../Login/user.png')}
+                        style={{width: 50, height: 50}}
+                      />
+                    </TouchableOpacity>
                     <View>
                       <Text>{item.description}</Text>
                       <Text>{item.totalMarks}</Text>

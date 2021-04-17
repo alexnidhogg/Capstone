@@ -11,6 +11,8 @@ import CreateStudySession from './Components/StudySessions/CreateStudySession';
 import {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import SignUpScreen from './Components/SignUp/SignUpScreen';
+import AssignmentScreen from "./Components/Grades/AssignmentScreen";
+
 
 const NavigationController = () => {
   var text = 'MainMenu';
@@ -55,6 +57,7 @@ const NavigationController = () => {
         />
         <Nav.Screen name="StudySessions" component={StudySessionsScreen} />
         <Nav.Screen name="Grades" component={GradesScreen} />
+        <Nav.Screen name={'Assignment'} component={AssignmentScreen} />
         <Nav.Screen name="ViewStudySession" component={ViewStudySession} />
         <Nav.Screen name="CreateStudySession" component={CreateStudySession} />
         <Nav.Screen name={'SignUp'} component={SignUpScreen} />

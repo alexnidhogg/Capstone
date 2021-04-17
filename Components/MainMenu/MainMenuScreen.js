@@ -14,11 +14,30 @@ import {
   StyleSheet,
   ImageBackground,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useState} from 'react';
 //
 const MainMenuScreen = ({navigation}) => {
   console.log(auth().currentUser.uid);
+  const [user, setUser] = useState({
+    Icon: '',
+    Name: '',
+  });
+  firestore()
+    .collection('Users')
+    .where('UserId', '==', auth().currentUser.uid)
+    .get()
+    .then((value) => {
+      var userRaw = {
+        Icon: value.docs[0].get('profilePic'),
+        Name:
+          value.docs[0].get('FirstName') + ' ' + value.docs[0].get('LastName'),
+      };
+      setUser(userRaw);
+    });
+
   return (
     <ImageBackground
       source={require('../Login/back1.png')}
@@ -39,13 +58,14 @@ const MainMenuScreen = ({navigation}) => {
           marginTop: 30,
           width: 150,
           height: 150,
+          borderRadius: 90,
         }}
-        source={require('../Login/user.png')}
+        source={{uri: user.Icon}}
       />
-      <Text style={styles.userNameText}>{auth().currentUser.email}</Text>
+      <Text style={styles.userNameText}>{user.Name}</Text>
       <Text style={styles.userAreaHeader}>This Week</Text>
       <View style={styles.userDataArea}>
-        <View style={{flexDirection: 'row',marginLeft: 25}}>
+        <View style={{flexDirection: 'row', marginLeft: 25}}>
           <TouchableOpacity
             style={styles.menuIcon}
             onPress={() => navigation.navigate('Grades')}>
@@ -70,6 +90,7 @@ const MainMenuScreen = ({navigation}) => {
               source={require('./MainMenuAssets/study.png')}
             />
           </TouchableOpacity>
+
         </View>
       </View>
     </ImageBackground>
