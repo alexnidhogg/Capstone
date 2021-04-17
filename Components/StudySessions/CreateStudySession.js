@@ -32,18 +32,50 @@ const CreateStudySessionsScreen = ({route, navigation}) => {
 
   const { callback } = route.params
 
+  function Validate() {
+    const Today = new Date()
+    if(startDate.getDate() < Today.getDate()) {
+      return "The Start Date cannot be in the past."
+    }
+    if(endDate.getDate() != startDate.getDate()) {
+      return "The End Date has to be on the same day as the Start Date!"
+    }
+    if(endDate.getHours() < startDate.getHours()) {
+      return "The End Time has to be after the Start Time."
+    } else if (endDate.getHours() == startDate.getHours()) {
+      if(endDate.getMinutes() <= startDate.getMinutes()) {
+        return "The End Time has to be after the Start Time."
+      }
+    }
+    if(description.trim() == "") {
+      return "Please enter a description."
+    }
+    return ""
+  }
+
   function CreateStudySession() {
-    firestore().collection('StudySession').add({
-      ClassId: course,
-      EndDate: endDate,
-      OrganizerID: auth().currentUser.uid,
-      Description: description,
-      StartDate: startDate,
-      Private: false
-    }).then((value) => {
-      callback()
-      navigation.goBack()
-    })
+
+    let Error = ""
+
+    Error = Validate()
+
+    if(Error == ""){
+      firestore().collection('StudySession').add({
+        ClassId: course,
+        EndDate: endDate,
+        OrganizerID: auth().currentUser.uid,
+        Description: description,
+        StartDate: startDate,
+        Private: false
+      }).then((value) => {
+        callback()
+        alert("Study Session created!")
+        navigation.goBack()
+      })
+    } else {
+      alert(Error)
+    }
+
   }
 
   firestore().collection('Course').get().then((values) => {
@@ -65,31 +97,18 @@ const CreateStudySessionsScreen = ({route, navigation}) => {
       <Text style={Style.Title}>
         Study Sessions
       </Text>
+
       <Text style={Style.NormalTextCentered}>
         Create Study Session
       </Text>
-      <View style={Style.FormRow}>
-        <Text style={Style.FormLabel}>Start Time</Text>
-        <DatePicker
-          date={startDate}
-          onDateChange={setStartDate}
-          style={{height: 100}}
-        />
-      </View>
-      <View style={Style.FormRow}>
-        <Text style={Style.FormLabel}>End Time</Text>
-        <DatePicker
-          date={endDate}
-          onDateChange={setEndDate}
-          style={{height: 100}}
-        />
-      </View>
+
       <View style={Style.FormRowColumn}>
         <Text style={Style.FormLabel}>Description</Text>
         <TextInput style={Style.BorderGrow} multiline={true}
-          onChangeText={setDescription}
+                   onChangeText={setDescription}
         />
       </View>
+
       <View style={Style.FormRow}>
         <Text style={Style.FormLabel}>Subject</Text>
         <View
@@ -107,6 +126,24 @@ const CreateStudySessionsScreen = ({route, navigation}) => {
           />
         </View>
       </View>
+
+      <View style={Style.FormRow}>
+        <Text style={Style.FormLabel}>Start Time</Text>
+        <DatePicker
+          date={startDate}
+          onDateChange={setStartDate}
+          style={{height: 100}}
+        />
+      </View>
+      <View style={Style.FormRow}>
+        <Text style={Style.FormLabel}>End Time</Text>
+        <DatePicker
+          date={endDate}
+          onDateChange={setEndDate}
+          style={{height: 100}}
+        />
+      </View>
+
       <View style={Style.Bottom}>
         <View style={Style.Buttons}>
           <Button
