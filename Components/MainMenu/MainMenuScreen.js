@@ -18,25 +18,48 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useState} from 'react';
+import {ProgressChart} from 'react-native-chart-kit';
+import * as Dimensions from 'react-native';
+import {
+  VictoryBar,
+  VictoryChart,
+  VictoryTheme,
+  VictoryPie,
+} from 'victory-native';
+
 //
 const MainMenuScreen = ({navigation}) => {
-  console.log(auth().currentUser.uid);
   const [user, setUser] = useState({
     Icon: '',
     Name: '',
   });
-  firestore()
-    .collection('Users')
-    .where('UserId', '==', auth().currentUser.uid)
-    .get()
-    .then((value) => {
-      var userRaw = {
-        Icon: value.docs[0].get('profilePic'),
-        Name:
-          value.docs[0].get('FirstName') + ' ' + value.docs[0].get('LastName'),
-      };
-      setUser(userRaw);
-    });
+
+  const [needsLoad, setLoad] = useState(true);
+  const [waiting, setWaiting] = useState(false);
+  function loadUser() {
+    firestore()
+      .collection('Users')
+      .where('UserId', '==', auth().currentUser.uid)
+      .get()
+      .then((value) => {
+        var userRaw = {
+          Icon: value.docs[0].get('profilePic'),
+          Name:
+            value.docs[0].get('FirstName') +
+            ' ' +
+            value.docs[0].get('LastName'),
+        };
+        setUser(userRaw);
+        setWaiting(false);
+      });
+  }
+  if (!waiting) {
+    if (needsLoad) {
+      setWaiting(true);
+      setLoad(false);
+      loadUser();
+    }
+  }
 
   return (
     <ImageBackground
@@ -48,6 +71,7 @@ const MainMenuScreen = ({navigation}) => {
           style={styles.titleText}
           onPress={() => {
             auth().signOut();
+            navigation.navigate('Login');
           }}>
           {' '}
           Log Out
@@ -90,8 +114,19 @@ const MainMenuScreen = ({navigation}) => {
               source={require('./MainMenuAssets/study.png')}
             />
           </TouchableOpacity>
-
         </View>
+        <VictoryPie
+          height={200}
+          width={200}
+          innerRadius={25}
+          colorScale={["cyan", "pink"]}
+          padAngle={5}
+          data={[
+            {x: 'Done', y: 10},
+
+            {x: 'In Progress', y: 90},
+          ]}
+        />
       </View>
     </ImageBackground>
   );
