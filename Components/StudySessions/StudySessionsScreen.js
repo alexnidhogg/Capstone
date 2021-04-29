@@ -8,47 +8,19 @@ import firestore from '@react-native-firebase/firestore'
 import * as DateFix from '../DateFix/DateFix'
 import auth from "@react-native-firebase/auth";
 import { useFocusEffect } from '@react-navigation/native'
+import model from './Model/StudySessionScreenModel'
 
 const StudySessionsScreen = ({navigation}) => {
 
-  function StudySessionLoad() {
-
-    firestore().collection('StudySession').orderBy('StartDate').get().then(
-      (values) => {
-        var Sessions = []
-        for(var x = 0; x < values.docs.length; x++){
-          let startDate = values.docs[x].get('StartDate')
-          let endDate = values.docs[x].get('EndDate')
-          Sessions[x] =
-            {
-              startDate: DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
-              endDate: DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
-              course: values.docs[x].get('ClassId').toString(),
-              notification: "",
-              sessionId: values.docs[x].id
-            }
-        }
-        setraw(Sessions)
-        setWaiting(false)
-        if(courses != []) {
-          UpdateStudySessionDisplay(currentTab)
-        }
-
-      }
-    ).catch((error) => {
-    });
-  }
-
   function UpdateStudySessionDisplay(tab = 'ALL') {
-    //alert(currentTab)
     if(tab == "ALL") {
-      load(
-        raw.map((item, key) => (
+      setSessions(
+        Model.studySessions.map((item, key) => (
         <View style={Style.Session} key={key}>
           <TouchableWithoutFeedback
             onPress={() => {
-              //alert(item.sessionId)
-              navigation.navigate('ViewStudySession', {sessionId: item.sessionId, callback: onReturn})
+              let i = item.sessionId
+              navigation.navigate('ViewStudySession', {sessionId: i, callback: onReturn})
             }}
             style={Style.Session}
           >
@@ -61,98 +33,69 @@ const StudySessionsScreen = ({navigation}) => {
         ))
       )
     } else {
-      var rawReturn = []
-      for (var i = 0; i < raw.length;i ++)
+      let rawReturn = []
+      for (let i = 0; i < Model.studySessions.length;i ++)
       {
-        //alert(raw[i].course)
-        if(raw[i].course == tab){
-          const sessionId = raw[i].sessionId
+        if(Model.studySessions[i].course == tab){
+          const sessionId = Model.studySessions[i].sessionId
           rawReturn[rawReturn.length] = <View style={Style.Session} key={rawReturn.length}>
             <TouchableWithoutFeedback
               onPress={() => {
-                //alert(item.sessionId)
                 navigation.navigate('ViewStudySession', {sessionId: sessionId, callback: onReturn})
               }}
               style={Style.Session}
             >
-              <Text style={Style.SessionLeft}>{raw[i].startDate}</Text>
+              <Text style={Style.SessionLeft}>{Model.studySessions[i].startDate}</Text>
               <Text style={Style.SessionLeft}> - </Text>
-              <Text style={Style.SessionLeft}>{raw[i].endDate}</Text>
-              <Text style={Style.SessionRight}>{raw[i].notification}</Text>
+              <Text style={Style.SessionLeft}>{Model.studySessions[i].endDate}</Text>
+              <Text style={Style.SessionRight}>{Model.studySessions[i].notification}</Text>
             </TouchableWithoutFeedback>
           </View>
         }
       }
-      load(rawReturn)
+      setSessions(rawReturn)
     }
   }
 
-  function LoadCourses() {
-    firestore().collection('Course').where('CourseId', 'in', courseLinks).get().then(
-      (values) => {
-        var CoursesRaw = [{
-          CourseId: 'ALL',
-          CourseName: 'All'
-        }]
-        for (var i = 0; i < values.docs.length; i++){
-          CoursesRaw[i+1] = {
-            CourseId: courseLinks[i],
-            CourseName: values.docs[i].get('CourseName')
-          }
-        }
-        setCourses(CoursesRaw)
-        setWaiting(false)
-      }
-    )
+  function UpdateCourseDisplay()
+  {
+    setCourses(Model.courses.map((item, key) =>(
+      <View key={key} style={Style.Class}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            setCurrentTab(item.CourseId)
+            UpdateStudySessionDisplay(item.CourseId)
+          }}
+          style={Style.Session}
+        >
+          <Text>{item.CourseName}</Text>
+        </TouchableWithoutFeedback>
+      </View>
+    )))
   }
 
-  function LoadCourseLinks() {
-    firestore().collection('CourseRecord').where('UserId', '==', auth().currentUser.uid).get().then(
-      (values) => {
-        var CourseLinksRaw = []
-        for (var i = 0; i < values.docs.length; i++){
-          CourseLinksRaw[i] = values.docs[i].get('CourseId')
-        }
-        setCourseLinks(CourseLinksRaw)
-        setWaiting(false)
-      }
-    )
-  }
+  const [Model, setModel] = useState(new model());
 
-  const [SessionDisplay, load] = useState(<View/>)
-  const [raw, setraw] = useState([]);
-  const [needsLoad, setLoad] = useState(true)
+  const [Refresh, triggerRefresh] = useState(0)
 
-  const [courseLinks, setCourseLinks] = useState([])
-  const [loadedCourseLinks, setLoadedCourseLinks] = useState(false)
-
-  const [courses, setCourses] = useState([])
-  const [loadedCourses, setLoadedCourses] = useState(false)
-
-  const [waiting, setWaiting] = useState(false)
+  const [SessionDisplay, setSessions] = useState(<View/>)
+  const [CourseDisplay, setCourses] = useState(<View/>)
 
   const [currentTab, setCurrentTab] = useState('ALL');
 
+  Model.SetRefresh(triggerRefresh)
+  Model.Load(Refresh)
 
-  if(!waiting){
-    if(needsLoad) {
-      setWaiting(true)
-      setLoad(false)
-      StudySessionLoad()
-    } else if (!needsLoad && !loadedCourseLinks) {
-      setWaiting(true)
-      setLoadedCourseLinks(true)
-      LoadCourseLinks()
-    } else if (loadedCourseLinks && !loadedCourses) {
-      setWaiting(true)
-      setLoadedCourses(true)
-      LoadCourses()
-      UpdateStudySessionDisplay()
-    }
+  if(Model.updateDisplay) {
+    Model.updateDisplay = false
+    UpdateCourseDisplay()
+    UpdateCourseDisplay(currentTab)
   }
 
   const onReturn = () => {
-    setLoad(true)
+    //Model.fullyLoaded = false;
+    //Model.updateStudySessions = true;
+    //Model.load();
   }
 
   return (
@@ -162,21 +105,7 @@ const StudySessionsScreen = ({navigation}) => {
         </Text>
 
         <ScrollView style={Style.Classes} horizontal={true}>
-          {
-            courses.map((item, key) =>(
-              <View key={key} style={Style.Class}>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setCurrentTab(item.CourseId)
-                    UpdateStudySessionDisplay(item.CourseId)
-                  }}
-                  style={Style.Session}
-                >
-                <Text>{item.CourseName}</Text>
-                </TouchableWithoutFeedback>
-              </View>
-            ))
-          }
+          {CourseDisplay}
         </ScrollView>
 
         <ScrollView style={Style.Sessions}>
