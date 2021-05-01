@@ -39,7 +39,7 @@ class model {
 
   Load(refresh) {
 
-    console.log("this.updateCourses ", this.updateCourses, " this.updateStudySessions ", this.updateStudySessions, " this.updateCourseLinks ", this.updateCourseLinks)
+    //console.log("this.updateCourses ", this.updateCourses, " this.updateStudySessions ", this.updateStudySessions, " this.updateCourseLinks ", this.updateCourseLinks)
 
     if(this.updateCourseLinks) {
       this.updateCourseLinks = false;
@@ -88,7 +88,7 @@ class model {
     }
     if(this.updateStudySessions) {
       this.updateStudySessions = false;
-      console.log("Got in Study Session Load")
+      //console.log("Got in Study Session Load")
       if(this.courseLinks.length > 0)
       {
         firestore().collection('StudySession').where('ClassId', 'in', this.courseLinks).orderBy('StartDate').get().then(
@@ -106,7 +106,7 @@ class model {
                   sessionId: values.docs[x].id
                 }
             }
-            console.log(this)
+            //console.log(this)
             this.updateDisplay = true;
             this.refresh(refresh+1);
           }
@@ -118,7 +118,7 @@ class model {
       }
       else
       {
-        console.log("fucky wycky")
+        //console.log("fucky wycky")
       }
     }
   }
