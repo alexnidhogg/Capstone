@@ -14,9 +14,11 @@ export function ConvertGoogleToTime(timestamptofix) {
   } else if (hour > 12) {
     returnString += (hour - 12).toString()
     ending = "PM"
-  } else {
+  } else if (hour == 12) {
     returnString += "12"
     ending = "PM"
+  } else {
+    returnString += hour.toString()
   }
   returnString += ":"
   if(minutes < 10){

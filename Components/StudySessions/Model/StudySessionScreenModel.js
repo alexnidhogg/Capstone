@@ -97,10 +97,13 @@ class model {
             for(let x = 0; x < values.docs.length; x++){
               let startDate = values.docs[x].get('StartDate')
               let endDate = values.docs[x].get('EndDate')
+
               this.studySessions[x] =
                 {
                   startDate: DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
+                  startDateRaw: values.docs[x].get('StartDate'),
                   endDate: DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
+                  endDateRaw: values.docs[x].get('EndDate'),
                   course: values.docs[x].get('ClassId').toString(),
                   notification: "",
                   sessionId: values.docs[x].id

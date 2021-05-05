@@ -32,6 +32,8 @@ const CreateStudySessionsScreen = ({route, navigation}) => {
 
   const { callback } = route.params
 
+  let studySessionId = "";
+
   function Validate() {
     const Today = new Date()
     if(startDate.getDate() < Today.getDate()) {
@@ -68,9 +70,23 @@ const CreateStudySessionsScreen = ({route, navigation}) => {
         StartDate: startDate,
         Private: false
       }).then((value) => {
-        callback()
-        alert("Study Session created!")
-        navigation.goBack()
+        studySessionId = value.id
+        firestore().collection('StudySession').doc(value.id).update({
+          StudySessionId: value.id
+        }).then(
+          value => {
+            firestore().collection('StudySession').doc(studySessionId).collection("Chat").doc('Index').set({
+              lastSpeaker: "none",
+              messageCount: 0
+            }).then(
+              value => {
+                alert("Study Session created!")
+                navigation.goBack()
+                callback()
+              }
+            )
+          }
+        )
       })
     } else {
       alert(Error)

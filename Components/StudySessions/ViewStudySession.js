@@ -7,7 +7,7 @@ import * as DateFix from "../DateFix/DateFix";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import * as Shorten from "../DateFix/Shorten";
 import auth from "@react-native-firebase/auth";
-import model from "./Model/ViewStudySessionModel"
+import model from "./Model/ViewStudySessionModel";
 
 const StudySessionsScreen = ({route, navigation}) => {
 
@@ -23,6 +23,71 @@ const StudySessionsScreen = ({route, navigation}) => {
   Model.Load(Refresh)
 
   //console.log("After:  ", Model)
+
+  function JoinStudySession()
+  {
+    firestore().collection('StudySessionAttendee').add({
+      StudySessionId: sessionId,
+      UserId: auth().currentUser.uid
+    }).then((value) => {
+      alert("Study Session Joined!")
+      Model.loadAttendees = true;
+      triggerRefresh(Refresh+1)
+    })
+  }
+
+  function AttendStudySession()
+  {
+
+  }
+
+  function LeaveStudySession()
+  {
+    firestore().collection('StudySessionAttendee').where('UserId', '==', auth().currentUser.uid).where('StudySessionId', '==', sessionId).get().then(
+      (values) => {
+        firestore().collection('StudySessionAttendee').doc(values.docs[0].ref.id).delete().then(
+          values => {
+            Model.loadAttendees = true;
+            Model.attendeesName = []
+            Model.attendeesId = []
+            alert("Study Session Dropped!")
+            triggerRefresh(Refresh+1)
+          }
+        )
+      }
+    )
+  }
+
+  function DeleteStudySession()
+  {
+    console.log('Delete')
+    firestore().collection('StudySessionAttendee').where('StudySessionId', '==', sessionId).get().then(
+      values => {
+        console.log('Delete call Made')
+        if(values.docs.length > 0) {
+          for (let i = 0; i < values.docs.length; i++) {
+            firestore().collection('StudySessionAttendee').doc(values.docs[i].ref.id).delete().then(
+              values => {
+                //do nothing
+              }
+            )
+          }
+        }
+        firestore().collection('StudySession').where('StudySessionId', '==', sessionId).get().then(
+          values => {
+            console.log('Deleting session')
+            firestore().collection('StudySession').doc(values.docs[0].ref.id).delete().then(
+              values => {
+                console.log('Deleted session')
+                callback()
+                navigation.goBack()
+              }
+            )
+          }
+        )
+      }
+    )
+  }
 
   function DisplayFunc() {
     if(Model.refreshDisplay) {
@@ -44,7 +109,7 @@ const StudySessionsScreen = ({route, navigation}) => {
         <ScrollView style={Style.DescriptionWithBorder}>
           {
             Model.attendeesName.map((item, key) => (
-              <Text key={key} style={Style.SessionLeft}>{item.name}</Text>
+              <Text key={key} style={Style.SessionLeft}>{item}</Text>
             ))
           }
         </ScrollView>
@@ -78,33 +143,50 @@ const StudySessionsScreen = ({route, navigation}) => {
   }
 
   function leftButton() {
-    if(Model.startDate == null)
+
+    let cur_Date = new Date()
+
+    if(Model.startDate == undefined)
     {
       return
     }
+
+    let start_Date = Model.startDateRaw.toDate()
+
     if(Model.organizerId == auth().currentUser.uid)
     {
-      return <Button title="Cancel" style={Style.Buttons}> </Button>
+      if(start_Date.getHours < cur_Date.getHours())
+      {
+        return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
+      }
+      else if(start_Date.getMinutes() < cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours())
+      {
+        return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
+      }
+      return <Button title="Cancel" style={Style.Buttons} onPress={() => {DeleteStudySession()}}> </Button>
     }
     else
     {
       for (let i = 0; i < Model.attendeesId.length; i++) {
-        if(Model.attendeesId = auth().currentUser.uid)
+        if(Model.attendeesId[i] == auth().currentUser.uid)
         {
-          if(Model.startDate.getHours() < Date().getHours())
+          if(start_Date.getHours() < cur_Date.getHours())
           {
-            return <Button title="Join Live Session" style={Style.Buttons}> </Button>
+            return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
           }
-          else if (Model.startDate.getMinutes() < Date().getMinutes() && Model.startDate.getHours() == Date().getHours())
+          else if (start_Date.getMinutes() < cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours())
           {
-            return <Button title="Join Live Session" style={Style.Buttons}> </Button>
+            return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
           }
-          return <Button title="Drop Out" style={Style.Buttons}> </Button>
+          return <Button title="Drop Out" style={Style.Buttons} onPress={() => {LeaveStudySession()}}> </Button>
         }
       }
-      return <Button title="Join" style={Style.Buttons}> </Button>
+      return <Button title="Join" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
     }
   }
+
+  console.log(Model.attendeesId)
+  console.log(Model.attendeesName)
 
   return (
     DisplayFunc()

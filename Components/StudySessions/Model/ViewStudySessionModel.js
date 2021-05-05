@@ -23,7 +23,14 @@ class model {
   attendeesId;
   attendeesName;
 
+  loadSession;
+  loadOrganizer;
+  loadCourse;
+  loadAttendees;
+  loadAttendeesNames;
+
   refresh;
+
   refreshDisplay;
 
   constructor(sessionId) {

@@ -86,16 +86,15 @@ const StudySessionsScreen = ({navigation}) => {
   Model.Load(Refresh)
 
   if(Model.updateDisplay) {
-    console.log("Supposed to have updated screen.")
     Model.updateDisplay = false
     UpdateCourseDisplay()
     UpdateStudySessionDisplay()
   }
 
   const onReturn = () => {
-    //Model.fullyLoaded = false;
-    //Model.updateStudySessions = true;
-    //Model.load();
+    Model.studySessions = []
+    Model.UpdateStudySessions = true;
+    triggerRefresh(Refresh+1)
   }
 
   return (
