@@ -38,7 +38,7 @@ const StudySessionsScreen = ({route, navigation}) => {
 
   function AttendStudySession()
   {
-
+    navigation.navigate('StudySessionChat', {sessionId: sessionId})
   }
 
   function LeaveStudySession()
@@ -146,41 +146,61 @@ const StudySessionsScreen = ({route, navigation}) => {
 
     let cur_Date = new Date()
 
-    if(Model.startDate == undefined)
+    if(Model.startDateRaw == undefined)
     {
       return
     }
 
     let start_Date = Model.startDateRaw.toDate()
+    let end_Date = Model.endDateRaw.toDate()
+
+    console.log(cur_Date, " ", cur_Date.getFullYear(), " ", cur_Date.getMonth(), " ", cur_Date.getDate(), " ", cur_Date.getHours(), " ", cur_Date.getMinutes())
+    console.log(start_Date, " ", start_Date.getFullYear(), " ", start_Date.getMonth(), " ", start_Date.getDate(), " ", start_Date.getHours(), " ", start_Date.getMinutes())
+    console.log(end_Date, " ", end_Date.getFullYear(), " ", end_Date.getMonth(), " ", end_Date.getDate(), " ", end_Date.getHours(), " ", end_Date.getMinutes())
 
     if(Model.organizerId == auth().currentUser.uid)
     {
-      if(start_Date.getHours < cur_Date.getHours())
+      console.log("user = organizer")
+      if(cur_Date.getDate() == start_Date.getDate() && cur_Date.getMonth() == start_Date.getMonth() && cur_Date.getFullYear() == start_Date.getFullYear())
       {
-        return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
+        console.log("date = start date")
+        if(start_Date.getHours() < cur_Date.getHours())
+        {
+          console.log("hours before")
+          return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
+        }
+        else if(start_Date.getMinutes() <= cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours())
+        {
+          console.log("minutes before")
+          return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
+        }
       }
-      else if(start_Date.getMinutes() < cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours())
-      {
-        return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
-      }
+      console.log("not yet")
       return <Button title="Cancel" style={Style.Buttons} onPress={() => {DeleteStudySession()}}> </Button>
     }
     else
     {
+      console.log("user != organizer")
       for (let i = 0; i < Model.attendeesId.length; i++) {
+        console.log("loop for attendee")
         if(Model.attendeesId[i] == auth().currentUser.uid)
         {
-          if(start_Date.getHours() < cur_Date.getHours())
-          {
-            return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
+          if(cur_Date.getDate() == start_Date.getDate() && cur_Date.getMonth() == start_Date.getMonth() && cur_Date.getFullYear() == start_Date.getFullYear()) {
+            console.log("date = start date")
+            if (start_Date.getHours() < cur_Date.getHours()) {
+              console.log("hours before")
+              return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
+            }
+            else if (start_Date.getMinutes() < cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours()) {
+              console.log("minutes before")
+              return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
+            }
           }
-          else if (start_Date.getMinutes() < cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours())
-          {
-            return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
-          }
+          console.log("not yet")
           return <Button title="Drop Out" style={Style.Buttons} onPress={() => {LeaveStudySession()}}> </Button>
         }
       }
+      console.log("not member")
       return <Button title="Join" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
     }
   }

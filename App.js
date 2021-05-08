@@ -12,6 +12,7 @@ import {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import SignUpScreen from './Components/SignUp/SignUpScreen';
 import AssignmentScreen from "./Components/Grades/AssignmentScreen";
+import StudySessionChat from "./Components/StudySessions/StudySessionChat";
 
 
 const NavigationController = () => {
@@ -61,6 +62,7 @@ const NavigationController = () => {
         <Nav.Screen name="ViewStudySession" component={ViewStudySession} />
         <Nav.Screen name="CreateStudySession" component={CreateStudySession} />
         <Nav.Screen name={'SignUp'} component={SignUpScreen} />
+        <Nav.Screen name={'StudySessionChat'} component={StudySessionChat} />
       </Nav.Navigator>
     </NavigationContainer>
   );
