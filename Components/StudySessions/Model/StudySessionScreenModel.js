@@ -39,7 +39,7 @@ class model {
 
   Load(refresh) {
 
-    console.log("this.updateCourses ", this.updateCourses, " this.updateStudySessions ", this.updateStudySessions, " this.updateCourseLinks ", this.updateCourseLinks)
+    //console.log("this.updateCourses ", this.updateCourses, " this.updateStudySessions ", this.updateStudySessions, " this.updateCourseLinks ", this.updateCourseLinks)
 
     if(this.updateCourseLinks) {
       this.updateCourseLinks = false;
@@ -88,7 +88,7 @@ class model {
     }
     if(this.updateStudySessions) {
       this.updateStudySessions = false;
-      console.log("Got in Study Session Load")
+      //console.log("Got in Study Session Load")
       if(this.courseLinks.length > 0)
       {
         firestore().collection('StudySession').where('ClassId', 'in', this.courseLinks).orderBy('StartDate').get().then(
@@ -97,16 +97,19 @@ class model {
             for(let x = 0; x < values.docs.length; x++){
               let startDate = values.docs[x].get('StartDate')
               let endDate = values.docs[x].get('EndDate')
+
               this.studySessions[x] =
                 {
                   startDate: DateFix.ConvertGoogleToMonthDate(startDate) + " " + DateFix.ConvertGoogleToTime(startDate),
+                  startDateRaw: values.docs[x].get('StartDate'),
                   endDate: DateFix.ConvertGoogleToMonthDate(endDate) + " " + DateFix.ConvertGoogleToTime(endDate),
+                  endDateRaw: values.docs[x].get('EndDate'),
                   course: values.docs[x].get('ClassId').toString(),
                   notification: "",
                   sessionId: values.docs[x].id
                 }
             }
-            console.log(this)
+            //console.log(this)
             this.updateDisplay = true;
             this.refresh(refresh+1);
           }
@@ -118,7 +121,7 @@ class model {
       }
       else
       {
-        console.log("fucky wycky")
+        //console.log("fucky wycky")
       }
     }
   }

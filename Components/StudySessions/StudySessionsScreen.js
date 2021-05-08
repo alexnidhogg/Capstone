@@ -57,8 +57,7 @@ const StudySessionsScreen = ({navigation}) => {
     }
   }
 
-  function UpdateCourseDisplay()
-  {
+  function UpdateCourseDisplay() {
     setCourses(Model.courses.map((item, key) =>(
       <View key={key} style={Style.Class}>
         <TouchableWithoutFeedback
@@ -89,13 +88,13 @@ const StudySessionsScreen = ({navigation}) => {
   if(Model.updateDisplay) {
     Model.updateDisplay = false
     UpdateCourseDisplay()
-    UpdateCourseDisplay(currentTab)
+    UpdateStudySessionDisplay()
   }
 
   const onReturn = () => {
-    //Model.fullyLoaded = false;
-    //Model.updateStudySessions = true;
-    //Model.load();
+    Model.studySessions = []
+    Model.UpdateStudySessions = true;
+    triggerRefresh(Refresh+1)
   }
 
   return (
