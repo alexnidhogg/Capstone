@@ -36,6 +36,12 @@ const MainMenuScreen = ({navigation}) => {
 
   const [needsLoad, setLoad] = useState(true);
   const [waiting, setWaiting] = useState(false);
+  const [chartState, setChart] = useState('Assignments Due');
+
+  const [loadedCourseLinks, setLoadedCourseLinks] = useState(false);
+  const [courseLinks, setCourseLinks] = useState([]);
+  const [assignmentCount, setAssignmentCount] = useState(0);
+  const [submissionTotal, setSubCount] = useState(0);
   function loadUser() {
     firestore()
       .collection('Users')
@@ -50,6 +56,39 @@ const MainMenuScreen = ({navigation}) => {
             value.docs[0].get('LastName'),
         };
         setUser(userRaw);
+      });
+  }
+  function loadCourseLinks() {
+    firestore()
+      .collection('CourseMembership')
+      .where('UserID', '==', auth().currentUser.uid)
+      .get()
+      .then((values) => {
+        var CourseLinksRaw = [];
+        for (var i = 0; i < values.docs.length; i++) {
+          CourseLinksRaw[i] = values.docs[i].get('CourseID');
+        }
+        setCourseLinks(CourseLinksRaw);
+        setWaiting(false);
+      });
+  }
+  function loadSubTotal(){
+    firestore()
+      .collection('Submission')
+      .where('SubmittedBy', '==', auth().currentUser.uid)
+      .get()
+      .then((values) => {
+        setSubCount(values.docs.length);
+        setWaiting(false);
+      });
+  }
+  function loadActivityCount() {
+    firestore()
+      .collection('Activity')
+      .where('CourseID', 'in', courseLinks)
+      .get()
+      .then((values) => {
+        setAssignmentCount(values.docs.length);
         setWaiting(false);
       });
   }
@@ -58,6 +97,12 @@ const MainMenuScreen = ({navigation}) => {
       setWaiting(true);
       setLoad(false);
       loadUser();
+      loadCourseLinks();
+    } else if (!needsLoad && !loadedCourseLinks) {
+      setWaiting(true);
+      setLoadedCourseLinks(true);
+      loadActivityCount();
+      loadSubTotal();
     }
   }
 
@@ -67,15 +112,6 @@ const MainMenuScreen = ({navigation}) => {
       style={styles.LoginView}>
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.titleText}>Study Buddy</Text>
-        <Text
-          style={styles.titleText}
-          onPress={() => {
-            auth().signOut();
-            navigation.navigate('Login');
-          }}>
-          {' '}
-          Log Out
-        </Text>
       </View>
       <Image
         style={{
@@ -115,18 +151,41 @@ const MainMenuScreen = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'white',
+            textAlign: 'center',
+          }}>
+          {chartState}
+        </Text>
         <VictoryPie
+          animate={{duration: 500}}
           height={200}
-          width={200}
+          width={230}
           innerRadius={25}
-          colorScale={["cyan", "pink"]}
+          colorScale={['cyan', 'pink']}
           padAngle={5}
+          style={{
+            alignSelf: 'center',
+            labels: {fill: 'white', fontWeight: 'bold', fontSize: 10},
+          }}
           data={[
-            {x: 'Done', y: 10},
+            {x: 'Done', y: submissionTotal},
 
-            {x: 'In Progress', y: 90},
+            {x: 'In Progress', y: assignmentCount - submissionTotal},
           ]}
         />
+        <Text
+          style={styles.logoutText}
+          onPress={() => {
+            auth().signOut();
+            navigation.navigate('Login');
+          }}>
+          {' '}
+          Log Out
+        </Text>
       </View>
     </ImageBackground>
   );
@@ -143,6 +202,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flex: 1,
     fontSize: 30,
+    fontWeight: 'bold',
+    color: '#FFF',
+    fontFamily: 'MMA Champ',
+    textShadowRadius: 10,
+    textShadowColor: 'black',
+  },
+  logoutText: {
+    textAlign: 'center',
+    flex: 1,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#FFF',
     fontFamily: 'MMA Champ',
