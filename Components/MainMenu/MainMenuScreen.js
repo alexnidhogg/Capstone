@@ -13,10 +13,13 @@ import {
   Image,
   StyleSheet,
   ImageBackground,
+  Picker,
 } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import userpic from '../Login/user.png';
 import {useState} from 'react';
 import {ProgressChart} from 'react-native-chart-kit';
 import * as Dimensions from 'react-native';
@@ -26,22 +29,28 @@ import {
   VictoryTheme,
   VictoryPie,
 } from 'victory-native';
+import {PickerItem} from 'react-native/Libraries/Components/Picker/Picker';
 
 //
 const MainMenuScreen = ({navigation}) => {
   const [user, setUser] = useState({
     Icon: '',
     Name: '',
+    UserClass: '',
+    uid: '',
   });
-
+  const [listLoad, setListLoad] = useState(false);
   const [needsLoad, setLoad] = useState(true);
   const [waiting, setWaiting] = useState(false);
   const [chartState, setChart] = useState('Assignments Due');
-
+  const [pCheck, setCheck] = useState(false);
   const [loadedCourseLinks, setLoadedCourseLinks] = useState(false);
   const [courseLinks, setCourseLinks] = useState([]);
   const [assignmentCount, setAssignmentCount] = useState(0);
   const [submissionTotal, setSubCount] = useState(0);
+  const [childLink, setChildrenLink] = useState([]);
+  const [userload, setLoadUser] = useState(true);
+  const [loadedAct, setActLoad] = useState(false);
   function loadUser() {
     firestore()
       .collection('Users')
@@ -54,14 +63,40 @@ const MainMenuScreen = ({navigation}) => {
             value.docs[0].get('FirstName') +
             ' ' +
             value.docs[0].get('LastName'),
+          UserClass: value.docs[0].get('UserClass'),
+          uid: auth().currentUser.uid,
         };
+        if (userRaw.UserClass == 'Parent') {
+          setLoadUser(false);
+          setCheck(true);
+          setWaiting(true);
+          loadChildrenLink();
+
+        }
         setUser(userRaw);
+
+        setWaiting(false);
+      });
+  }
+  function loadChildrenLink() {
+    firestore()
+      .collection('ParentLink')
+      .where('ParentUserID', '==', auth().currentUser.uid)
+      .get()
+      .then((value) => {
+        const childLinkRaw = [];
+        for (var i = 0; i < value.docs.length; i++) {
+          childLinkRaw[i] = value.docs[i].get('ChildUserId');
+        }
+        setChildrenLink(childLinkRaw);
+        setListLoad(true);
+        setWaiting(false);
       });
   }
   function loadCourseLinks() {
     firestore()
       .collection('CourseMembership')
-      .where('UserID', '==', auth().currentUser.uid)
+      .where('UserID', '==', user.uid)
       .get()
       .then((values) => {
         var CourseLinksRaw = [];
@@ -69,13 +104,14 @@ const MainMenuScreen = ({navigation}) => {
           CourseLinksRaw[i] = values.docs[i].get('CourseID');
         }
         setCourseLinks(CourseLinksRaw);
+        console.log(courseLinks);
         setWaiting(false);
       });
   }
-  function loadSubTotal(){
+  function loadSubTotal() {
     firestore()
       .collection('Submission')
-      .where('SubmittedBy', '==', auth().currentUser.uid)
+      .where('SubmittedBy', '==', user.uid)
       .get()
       .then((values) => {
         setSubCount(values.docs.length);
@@ -92,20 +128,39 @@ const MainMenuScreen = ({navigation}) => {
         setWaiting(false);
       });
   }
+  function showChild() {
+    var tempUser = {
+      Icon: user.Icon,
+      Name: user.Name,
+      UserClass: user.UserClass,
+      uid: childLink[0],
+    };
+    setUser(tempUser);
+    setWaiting(false);
+  }
   if (!waiting) {
     if (needsLoad) {
       setWaiting(true);
-      setLoad(false);
       loadUser();
-      loadCourseLinks();
-    } else if (!needsLoad && !loadedCourseLinks) {
+      setLoad(false);
+    } else if (!loadedCourseLinks && userload) {
       setWaiting(true);
-      setLoadedCourseLinks(true);
-      loadActivityCount();
+      loadCourseLinks();
       loadSubTotal();
+      setLoadedCourseLinks(true);
+    } else if (loadedCourseLinks && !loadedAct) {
+      if (courseLinks.length != 0) {
+        setWaiting(true);
+        loadActivityCount();
+        setActLoad(true);
+      }
+    } else if (!userload && listLoad) {
+      setWaiting(true);
+      showChild();
+      setLoadUser(true);
     }
   }
-
+  console.log(courseLinks.length);
   return (
     <ImageBackground
       source={require('../Login/back1.png')}
@@ -126,14 +181,19 @@ const MainMenuScreen = ({navigation}) => {
       <Text style={styles.userAreaHeader}>This Week</Text>
       <View style={styles.userDataArea}>
         <View style={{flexDirection: 'row', marginLeft: 25}}>
-          <TouchableOpacity
-            style={styles.menuIcon}
-            onPress={() => navigation.navigate('Grades')}>
-            <Image
-              style={{width: 50, height: 50, marginLeft: 'auto'}}
-              source={require('./MainMenuAssets/assignments.png')}
-            />
-          </TouchableOpacity>
+          {pCheck === false ? (
+            <TouchableOpacity
+              style={styles.menuIcon}
+              onPress={() => navigation.navigate('Grades')}>
+              <Image
+                style={{width: 50, height: 50, marginLeft: 'auto'}}
+                source={require('./MainMenuAssets/assignments.png')}
+              />
+            </TouchableOpacity>
+          ) : (
+            <View />
+          )}
+
           <TouchableOpacity
             style={styles.menuIcon}
             onPress={() => navigation.navigate('StudySessions')}>
@@ -142,14 +202,18 @@ const MainMenuScreen = ({navigation}) => {
               source={require('./MainMenuAssets/stats.png')}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.menuIcon}
-            onPress={() => navigation.navigate('StudySessions')}>
-            <Image
-              style={{width: 50, height: 50, marginLeft: 'auto'}}
-              source={require('./MainMenuAssets/study.png')}
-            />
-          </TouchableOpacity>
+          {pCheck === false ? (
+            <TouchableOpacity
+              style={styles.menuIcon}
+              onPress={() => navigation.navigate('StudySessions')}>
+              <Image
+                style={{width: 50, height: 50, marginLeft: 'auto'}}
+                source={require('./MainMenuAssets/study.png')}
+              />
+            </TouchableOpacity>
+          ) : (
+            <View />
+          )}
         </View>
         <Text
           style={{
