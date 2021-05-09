@@ -31,7 +31,7 @@ import {
 } from 'victory-native';
 import {PickerItem} from 'react-native/Libraries/Components/Picker/Picker';
 
-//
+//Do
 const MainMenuScreen = ({navigation}) => {
   const [user, setUser] = useState({
     Icon: '',
@@ -39,6 +39,7 @@ const MainMenuScreen = ({navigation}) => {
     UserClass: '',
     uid: '',
   });
+  //Spagetti Haven send help plz
   const [listLoad, setListLoad] = useState(false);
   const [needsLoad, setLoad] = useState(true);
   const [waiting, setWaiting] = useState(false);
@@ -71,7 +72,6 @@ const MainMenuScreen = ({navigation}) => {
           setCheck(true);
           setWaiting(true);
           loadChildrenLink();
-
         }
         setUser(userRaw);
 
@@ -138,6 +138,7 @@ const MainMenuScreen = ({navigation}) => {
     setUser(tempUser);
     setWaiting(false);
   }
+  // i dont know how it works, i dont know why it works... but im afraid to ask
   if (!waiting) {
     if (needsLoad) {
       setWaiting(true);
@@ -168,17 +169,27 @@ const MainMenuScreen = ({navigation}) => {
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.titleText}>Study Buddy</Text>
       </View>
-      <Image
-        style={{
-          marginTop: 30,
-          width: 150,
-          height: 150,
-          borderRadius: 90,
-        }}
-        source={{uri: user.Icon}}
-      />
+      {user.icon === '' ? (
+        <Text>Be Paitent Dickhead </Text>
+      ) : (
+        <Image
+          style={{
+            marginTop: 30,
+            width: 150,
+            height: 150,
+            borderRadius: 90,
+          }}
+          source={{uri: user.Icon}}
+        />
+      )}
+
       <Text style={styles.userNameText}>{user.Name}</Text>
-      <Text style={styles.userAreaHeader}>This Week</Text>
+      {pCheck === true ? (
+        <Text style={styles.userAreaHeader}>Parental Overview</Text>
+      ) : (
+        <Text style={styles.userAreaHeader}>This Week</Text>
+      )}
+
       <View style={styles.userDataArea}>
         <View style={{flexDirection: 'row', marginLeft: 25}}>
           {pCheck === false ? (
