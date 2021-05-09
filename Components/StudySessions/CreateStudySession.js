@@ -77,7 +77,8 @@ const CreateStudySessionsScreen = ({route, navigation}) => {
           value => {
             firestore().collection('StudySession').doc(studySessionId).collection("Chat").doc('Index').set({
               lastSpeaker: "none",
-              messageCount: 0
+              messageCount: 0,
+              type: "Index"
             }).then(
               value => {
                 alert("Study Session created!")
