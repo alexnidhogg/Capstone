@@ -235,23 +235,27 @@ const MainMenuScreen = ({navigation}) => {
           }}>
           {chartState}
         </Text>
-        <VictoryPie
-          animate={{duration: 500}}
-          height={200}
-          width={230}
-          innerRadius={25}
-          colorScale={['cyan', 'pink']}
-          padAngle={5}
-          style={{
-            alignSelf: 'center',
-            labels: {fill: 'white', fontWeight: 'bold', fontSize: 10},
-          }}
-          data={[
-            {x: 'Done', y: submissionTotal},
+        {courseLinks.length === 0 ? (
+          <View />
+        ) : (
+          <VictoryPie
+            animate={{duration: 500}}
+            height={200}
+            width={230}
+            innerRadius={25}
+            colorScale={['cyan', 'pink']}
+            padAngle={5}
+            style={{
+              alignSelf: 'center',
+              labels: {fill: 'white', fontWeight: 'bold', fontSize: 10},
+            }}
+            data={[
+              {x: 'Done', y: submissionTotal},
 
-            {x: 'In Progress', y: assignmentCount - submissionTotal},
-          ]}
-        />
+              {x: 'In Progress', y: assignmentCount - submissionTotal},
+            ]}
+          />
+        )}
         <Text
           style={styles.logoutText}
           onPress={() => {
