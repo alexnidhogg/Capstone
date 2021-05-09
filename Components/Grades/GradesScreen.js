@@ -101,9 +101,9 @@ const GradeScreen = ({navigation}) => {
       setLoad(false);
       LoadUserActivities();
     } else if (!needsLoad && !loadedCourseLinks) {
+      LoadCourseLinks();
       setWaiting(true);
       setLoadedCourseLinks(true);
-      LoadCourseLinks();
     } else if (loadedCourseLinks && !loadedCourses) {
       setWaiting(true);
       setLoadedCourses(true);
@@ -120,12 +120,19 @@ const GradeScreen = ({navigation}) => {
       source={require('../Login/back1.png')}
       style={styles.LoginView}>
       <View style={styles.userDataArea}>
+        <Text style={styles.areaHeader}>Assignments</Text>
         <View style={{flexDirection: 'row', alignSelf: 'flex-end'}}>
           <View style={styles.userActivityArea}>
             <ScrollView>
               {assignments.map((item, key) => (
                 <View key={key}>
-                  <View style={{flexDirection: 'row'}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      backgroundColor: 'white',
+                      margin: 10,
+                      borderRadius: 90,
+                    }}>
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate('Assignment', {
@@ -134,14 +141,20 @@ const GradeScreen = ({navigation}) => {
                         })
                       }>
                       <Image
-                        source={require('../Login/user.png')}
-                        style={{width: 50, height: 50}}
+                        source={require('../MainMenu/MainMenuAssets/pen.png')}
+                        style={{width: 50, height: 50, margin: 5}}
                       />
                     </TouchableOpacity>
                     <View>
-                      <Text>{item.description}</Text>
-                      <Text>{item.totalMarks}</Text>
-                      <Text>{item.weight}</Text>
+                      <Text style={styles.activityText}>
+                        {item.description}
+                      </Text>
+                      <Text style={styles.activityText}>
+                        Total Marks: {item.totalMarks}
+                      </Text>
+                      <Text style={styles.activityText}>
+                        Total Weight: {item.weight * 100}%
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -151,9 +164,9 @@ const GradeScreen = ({navigation}) => {
           <View style={styles.userClassArea}>
             <ScrollView>
               {courses.map((item, key) => (
-                <View key={key}>
+                <View style={styles.classItem} key={key}>
                   <TouchableWithoutFeedback>
-                    <Text>{item.CourseName}</Text>
+                    <Text style={styles.classItemText}>{item.CourseName}</Text>
                   </TouchableWithoutFeedback>
                 </View>
               ))}
@@ -190,9 +203,26 @@ const styles = StyleSheet.create({
     width: '60%',
     height: '100%',
     marginTop: 15,
-    marginRight: 20,
-    backgroundColor: 'red',
+    marginRight: 30,
     borderRadius: 30,
+  },
+  activityText: {
+    color: 'rgb(210,87,255)',
+    fontWeight: 'bold',
+  },
+  areaHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+    textAlign: 'center',
+  },
+  classItemText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  classItem: {
+    borderRadius: 30,
+    marginTop: 5,
   },
 });
 export default GradeScreen;
