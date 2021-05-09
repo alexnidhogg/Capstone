@@ -19,8 +19,26 @@ import auth from '@react-native-firebase/auth';
 const SignUpScreen = ({navigation}) => {
   const [user, onChangeText] = React.useState('');
   const [pass, passget] = React.useState('');
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setlastName] = React.useState('');
+  const [StudentNumber, setStudentNumber] = React.useState('');
   return (
     <View>
+      <TextInput
+        placeholder="First Name"
+        onChangeText={(fn) => setFirstName(fn)}
+        value={firstName}
+      />
+      <TextInput
+        placeholder="Last Name"
+        onChangeText={(ln) => setlastName(ln)}
+        value={lastName}
+      />
+      <TextInput
+        placeholder="Student Number"
+        onChangeText={(num) => setStudentNumber(num)}
+        value={StudentNumber}
+      />
       <TextInput
         placeholder="Username"
         onChangeText={(user) => onChangeText(user)}
@@ -46,7 +64,6 @@ const SignUpScreen = ({navigation}) => {
         }}
       />
     </View>
-
   );
 };
 const styles = StyleSheet.create({
@@ -67,6 +84,5 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
   },
 });
-
 
 export default SignUpScreen;
