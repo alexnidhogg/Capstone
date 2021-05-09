@@ -189,11 +189,11 @@ const StudySessionsScreen = ({route, navigation}) => {
             console.log("date = start date")
             if (start_Date.getHours() < cur_Date.getHours()) {
               console.log("hours before")
-              return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
+              return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
             }
             else if (start_Date.getMinutes() < cur_Date.getMinutes() && start_Date.getHours() == cur_Date.getHours()) {
               console.log("minutes before")
-              return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {JoinStudySession()}}> </Button>
+              return <Button title="Join Live Session" style={Style.Buttons} onPress={() => {AttendStudySession()}}> </Button>
             }
           }
           console.log("not yet")

@@ -17,6 +17,8 @@ const StudySessionChat = ({route, navigation}) => {
 
   const [MessageDisplay, SetMessageDisplay] = useState([])
 
+  const increment = firestore.FieldValue.increment(1)
+
   Model.setRefresh(Messages)
   Model.Load(Refresh)
 
@@ -38,7 +40,16 @@ const StudySessionChat = ({route, navigation}) => {
       }
     ).then(
       value => {
-        Model.ReLoad()
+        firestore().collection('StudySession').doc(sessionId).collection('Chat').doc('Index').update(
+          {
+            lastSpeaker: auth().currentUser.uid,
+            messageCount: increment
+          }
+        ).then(
+          value => {
+            Model.ReLoad()
+          }
+        )
       }
     )
     UpdateMessage("")
