@@ -22,6 +22,7 @@ const AssignmentScreen = ({route, navigation}) => {
   const [isSubmitted, loadSubCheck] = useState(false);
   const [singleFile, setSingleFile] = useState('');
   const [note, setNote] = useState('');
+  const [feedCheck, setCheck] = useState(false);
   const [file, selectedFile] = useState('');
   const [subDate, setSubDate] = useState(new Date());
   const [waiting, setWaiting] = useState(false);
@@ -101,45 +102,38 @@ const AssignmentScreen = ({route, navigation}) => {
       .where('SubmittedBy', '==', auth().currentUser.uid)
       .get()
       .then((value) => {
-        var sub = '';
+        let sub = '';
         if (value.docs.length != 0) {
           loadSubCheck(true);
           sub = value.docs[0].get('SubmissionId');
+          setSubID(sub);
         } else {
           sub = 'NA';
         }
         setSubID(sub);
+        setWaiting(false);
       });
-    if (subID != 'NA') {
-      firestore()
-        .collection('AssignmentGrade')
-        .where('SubmissionId', '==', subID)
-        .get()
-        .then((value) => {
-          let grade = {
-            Grade: value.docs[0].get('Grade'),
-            Feedback: value.docs[0].get('Feedback'),
-          };
-          loadFeedback(grade);
-        });
-    }
-    setWaiting(false);
-    setLoad(false);
+
+    console.log(subID);
   }
-  function submitAssignment() {
-    const today = new Date();
+  function getFeedBack() {
+    console.log(subID);
     firestore()
-      .collection('Submission')
-      .add({
-        ActivityId: sessionId,
-        Comment: note,
-        Data: file,
-        DateSubmitted: today.getDate(),
-        SubmissionId: auth().currentUser.uid.substring(0, 5),
-        SubmittedBy: auth().currentUser.uid,
-      })
-      .then(alert('File has been submitted'));
+      .collection('AssignmentGrade')
+      .where('SubmissionId', '==', subID)
+      .get()
+      .then((value) => {
+        let grade = {
+          Grade: value.docs[0].get('Grade'),
+          Feedback: value.docs[0].get('Feedback'),
+        };
+        console.log(grade);
+        loadFeedback(grade);
+        setWaiting(false);
+      });
+
   }
+
   const [loadedCourses, setLoadedCourses] = useState(false);
   const [loadedCourseLinks, setLoadedCourseLinks] = useState(false);
   if (!waiting) {
@@ -148,9 +142,13 @@ const AssignmentScreen = ({route, navigation}) => {
       setLoad(false);
       loadActivity();
     } else if (!needsLoad && !loadedCourseLinks) {
-      loadSubmission();
       setWaiting(true);
+      loadSubmission();
       setLoadedCourseLinks(true);
+    } else if (loadedCourseLinks && !feedCheck) {
+      setWaiting(true);
+      getFeedBack();
+      setCheck(true);
     }
   }
   return (
@@ -164,7 +162,7 @@ const AssignmentScreen = ({route, navigation}) => {
       />
       <TextInput
         placeholder="Password"
-        secureTextEntry={true}
+
         onChangeText={(desc) => setNote(desc)}
         value={note}
       />
@@ -172,7 +170,7 @@ const AssignmentScreen = ({route, navigation}) => {
       <Text>{session.TotalWeight}</Text>
       <Text>Submission ID: {subID}</Text>
       <Text>Feedback</Text>
-      <Text>Grade: {(feedback.Grade / session.Marks).toFixed(2) * 100}%</Text>
+      <Text>Grade: {feedback.Grade + '/' + session.Marks}</Text>
       <Text>Additional Comments {feedback.Feedback}</Text>
     </ImageBackground>
   );
