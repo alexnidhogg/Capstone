@@ -22,13 +22,24 @@ const StudySessionChat = ({route, navigation}) => {
   Model.setRefresh(Messages)
   Model.Load(Refresh)
 
+  /*
   firestore().collection('StudySession').doc(sessionId).collection('Chat').doc('Index').onSnapshot(
     Model.ReLoad, Error
   )
+  */
+
+  setTimeout(AutoRefresh, 10000)
+
+  function AutoRefresh() {
+    Model.initialized = false;
+    triggerRefresh(Refresh+1)
+  }
 
   function Error(errorInfo){
     console.log(errorInfo)
   }
+
+
 
   function SendMessage() {
     firestore().collection('StudySession').doc(sessionId).collection('Chat').add(
