@@ -207,7 +207,7 @@ const MainMenuScreen = ({navigation}) => {
 
           <TouchableOpacity
             style={styles.menuIcon}
-            onPress={() => navigation.navigate('StudySessions')}>
+            onPress={() => navigation.navigate('Stats', {uid: user.uid})}>
             <Image
               style={{width: 50, height: 50, marginLeft: 'auto'}}
               source={require('./MainMenuAssets/stats.png')}

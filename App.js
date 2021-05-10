@@ -13,6 +13,7 @@ import auth from '@react-native-firebase/auth';
 import SignUpScreen from './Components/SignUp/SignUpScreen';
 import AssignmentScreen from "./Components/Grades/AssignmentScreen";
 import StudySessionChat from "./Components/StudySessions/StudySessionChat";
+import StatsScreen from "./Components/Stats/StatsScreen";
 
 
 const NavigationController = () => {
@@ -56,6 +57,7 @@ const NavigationController = () => {
           component={LoginScreen}
           options={{headerShown: false}}
         />
+        <Nav.Screen name={"Stats"} component={StatsScreen} />
         <Nav.Screen name="StudySessions" component={StudySessionsScreen} />
         <Nav.Screen name="Grades" component={GradesScreen} />
         <Nav.Screen name={'Assignment'} component={AssignmentScreen} />
