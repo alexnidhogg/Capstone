@@ -131,7 +131,6 @@ const AssignmentScreen = ({route, navigation}) => {
         loadFeedback(grade);
         setWaiting(false);
       });
-
   }
 
   const [loadedCourses, setLoadedCourses] = useState(false);
@@ -157,12 +156,11 @@ const AssignmentScreen = ({route, navigation}) => {
       style={styles.LoginView}>
       <Button
         disabled={isSubmitted}
-        title="help"
+        title="Submit File"
         onPress={() => selectOneFile()}
       />
       <TextInput
-        placeholder="Password"
-
+        placeholder="Comment"
         onChangeText={(desc) => setNote(desc)}
         value={note}
       />
@@ -170,7 +168,7 @@ const AssignmentScreen = ({route, navigation}) => {
       <Text>{session.TotalWeight}</Text>
       <Text>Submission ID: {subID}</Text>
       <Text>Feedback</Text>
-      <Text>Grade: {feedback.Grade + '/' + session.Marks}</Text>
+      <Text>Grade: {feedback.Grade + '%'}</Text>
       <Text>Additional Comments {feedback.Feedback}</Text>
     </ImageBackground>
   );

@@ -1,9 +1,18 @@
-import {Text} from 'react-native-svg';
 import {useState} from 'react';
 import {VictoryChart, VictoryLine, VictoryTheme} from 'victory-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import * as React from 'react';
+import {
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ImageBackground,
+  TextInput,
+} from 'react-native';
 
 const StatsScreen = ({route, navigation}) => {
   const [courseLinks, setCourseLinks] = useState([]);
@@ -108,15 +117,19 @@ const StatsScreen = ({route, navigation}) => {
   }
 
   return (
-    <VictoryChart theme={VictoryTheme.material}>
-      <VictoryLine
-        style={{
-          data: {stroke: '#c43a31'},
-          parent: {border: '1px solid #ccc'},
-        }}
-        data={assignmentData}
-      />
-    </VictoryChart>
+    <View>
+      <Text style={{textAlign: 'center'}}>Grades Trend</Text>
+      <VictoryChart theme={VictoryTheme.material}>
+        <VictoryLine
+          style={{
+            data: {stroke: '#c43a31'},
+            parent: {border: '1px solid #ccc'},
+          }}
+          data={assignmentData}
+        />
+      </VictoryChart>
+    </View>
+
   );
 };
 
